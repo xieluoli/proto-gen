@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>proto-gen 示例 · macOS 窗口布局</title>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="shared.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+
+<!-- 顶部导航栏（原型自身的浏览栏） -->
+<nav class="proto-nav">
+  <a href="#" class="proto-back"><i data-lucide="arrow-left"></i>proto-gen 示例</a>
+  <span class="proto-title">macOS 窗口布局 + 旁注 PRD 面板</span>
+</nav>
+
+<!-- 左侧页面索引（toc） -->
+<nav class="toc-sidebar">
+  <div class="toc-title">页面导航</div>
+  <a class="toc-item" href="#section-home"><span class="toc-dot"></span>Home-01</a>
+  <a class="toc-item" href="#section-modal"><span class="toc-dot"></span>Home-02</a>
+</nav>
+
+<!-- 主内容区 -->
+<div class="page-stack" style="padding-top:40px;">
+
+<!-- Section 1：主页（左侧边栏 + 顶部工具栏 + 内容区 三件套） -->
+<div id="section-home">
+  <div class="section-label">Home-01</div>
+  <div class="proto-with-prd">
+
+    <div class="macos-window">
+      <div class="macos-titlebar">
+        <div class="macos-dot red"></div>
+        <div class="macos-dot yellow"></div>
+        <div class="macos-dot green"></div>
+        <div class="macos-title">Demo App — Dashboard</div>
+      </div>
+      <div class="macos-body">
+
+        <!-- ① 左侧边栏 -->
+        <div class="app-sidebar">
+          <div style="padding:4px 14px 12px;display:flex;align-items:center;gap:8px;">
+            <div style="width:22px;height:22px;border-radius:5px;background:var(--primary);display:flex;align-items:center;justify-content:center;">
+              <i data-lucide="zap" style="width:12px;height:12px;color:#fff;stroke-width:2.5;"></i>
+            </div>
+            <span style="font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:-0.02em;">Demo App</span>
+          </div>
+          <div class="sidebar-section-header" style="padding-top:4px;">主要功能</div>
+          <div class="sidebar-item active"><i data-lucide="home" class="nav-icon"></i>首页</div>
+          <div class="sidebar-item"><i data-lucide="layout-grid" class="nav-icon"></i>工作台</div>
+          <div class="sidebar-item"><i data-lucide="folder" class="nav-icon"></i>资源库</div>
+          <div class="sidebar-item"><i data-lucide="bar-chart-3" class="nav-icon"></i>数据统计</div>
+          <div class="sidebar-item"><i data-lucide="settings" class="nav-icon"></i>设置</div>
+          <div class="sidebar-divider"></div>
+          <div class="sidebar-section-header">收藏夹</div>
+          <div class="sidebar-apps">
+            <div class="sidebar-item"><span class="nav-icon" style="background:linear-gradient(135deg,#6366F1,#818cf8);color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:3px;">A</span>项目 Alpha</div>
+            <div class="sidebar-item"><span class="nav-icon" style="background:linear-gradient(135deg,#10B981,#34d399);color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:3px;">B</span>项目 Beta</div>
+            <div class="sidebar-item"><span class="nav-icon" style="background:linear-gradient(135deg,#F59E0B,#fbbf24);color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:3px;">G</span>项目 Gamma</div>
+          </div>
+        </div>
+
+        <!-- ② 顶部工具栏 -->
+        <div class="win-chrome-bar">
+          <div class="win-chrome-drag"></div>
+          <div class="win-chrome-actions">
+            <button class="win-chrome-btn" title="帮助"><i data-lucide="help-circle" class="win-chrome-icon"></i></button>
+            <div class="win-credits"><i data-lucide="coins" class="win-chrome-icon"></i><span>1,000 积分</span></div>
+            <div class="win-avatar-chip"><span class="win-avatar">U</span><span class="badge-free">FREE</span></div>
+            <button class="win-chrome-btn" title="菜单"><i data-lucide="menu" class="win-chrome-icon"></i></button>
+          </div>
+        </div>
+
+        <!-- ③ 内容区 -->
+        <div class="app-main">
+          <!-- 页头 -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+            <div>
+              <div style="font-family:var(--font-display);font-size:20px;font-weight:700;">Dashboard</div>
+              <div style="color:var(--text-2);font-size:12px;margin-top:2px;">欢迎回来，今天有 3 项任务待处理</div>
+            </div>
+            <button class="btn btn-primary"><i data-lucide="plus" style="width:14px;height:14px;"></i>新建项目</button>
+          </div>
+
+          <!-- 统计卡片 -->
+          <div class="grid-3" style="margin-bottom:18px;">
+            <div class="info-card">
+              <div style="color:var(--text-2);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">活跃项目</div>
+              <div style="font-family:var(--font-display);font-size:24px;font-weight:700;margin-top:6px;">12</div>
+              <div style="color:var(--success);font-size:11px;margin-top:4px;">↑ 较上周 +2</div>
+            </div>
+            <div class="info-card">
+              <div style="color:var(--text-2);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">待处理任务</div>
+              <div style="font-family:var(--font-display);font-size:24px;font-weight:700;margin-top:6px;">3</div>
+              <div style="color:var(--text-2);font-size:11px;margin-top:4px;">需在本周完成</div>
+            </div>
+            <div class="info-card">
+              <div style="color:var(--text-2);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">本月用量</div>
+              <div style="font-family:var(--font-display);font-size:24px;font-weight:700;margin-top:6px;">67%</div>
+              <div class="progress-bar" style="margin-top:6px;">
+                <div class="progress-fill indigo" style="width:67%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 列表 -->
+          <div style="font-size:12px;font-weight:600;margin-bottom:8px;color:var(--text-2);text-transform:uppercase;letter-spacing:0.05em;">最近活动</div>
+          <div class="info-card" style="padding:0;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span class="nav-icon" style="width:24px;height:24px;background:linear-gradient(135deg,#6366F1,#818cf8);color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:5px;">A</span>
+                <div>
+                  <div style="font-size:13px;font-weight:500;">项目 Alpha 已部署</div>
+                  <div style="color:var(--text-3);font-size:11px;margin-top:2px;">10 分钟前</div>
+                </div>
+              </div>
+              <span class="badge badge-success">成功</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span class="nav-icon" style="width:24px;height:24px;background:linear-gradient(135deg,#10B981,#34d399);color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:5px;">B</span>
+                <div>
+                  <div style="font-size:13px;font-weight:500;">项目 Beta 配置已更新</div>
+                  <div style="color:var(--text-3);font-size:11px;margin-top:2px;">1 小时前</div>
+                </div>
+              </div>
+              <span class="badge badge-info">已同步</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span class="nav-icon" style="width:24px;height:24px;background:linear-gradient(135deg,#F59E0B,#fbbf24);color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:5px;">G</span>
+                <div>
+                  <div style="font-size:13px;font-weight:500;">项目 Gamma 待审核</div>
+                  <div style="color:var(--text-3);font-size:11px;margin-top:2px;">3 小时前</div>
+                </div>
+              </div>
+              <span class="badge badge-warn">待处理</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 旁注 PRD 面板 -->
+    <div class="prd-panel-wrap">
+      <aside class="prd-panel">
+        <div class="prd-panel__title">功能概览</div>
+        <div class="prd-panel__body">
+          <div class="prd-section">
+            <div class="prd-section__title">Home-01：主页布局示意</div>
+            <ul>
+              <li>展示 macOS 窗口三件套结构：左侧 app-sidebar + 顶部 win-chrome-bar + 内容区 app-main</li>
+              <li>展示 app-sidebar，含品牌区、「主要功能」分组（5 项）、「收藏夹」分组（3 项），当前页「首页」高亮</li>
+              <li>展示 win-chrome-bar，含拖动区 + 帮助按钮 + 积分 chip + 用户头像 + 菜单按钮</li>
+              <li>展示页头「Dashboard」标题（display 字体）+ 副文案 + 「新建项目」主色按钮</li>
+              <li>展示 3 张统计卡片（grid-3）：活跃项目、待处理任务、本月用量，含数字、变化趋势、进度条</li>
+              <li>展示「最近活动」列表（info-card），每行含品牌图标、标题、时间、状态 badge</li>
+              <li>状态 badge 三色：成功（绿）、已同步（蓝）、待处理（黄）</li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+  </div>
+</div>
+
+<!-- Section 2：弹窗叠加态 -->
+<div id="section-modal">
+  <div class="section-label">Home-02</div>
+  <div class="proto-with-prd">
+
+    <div class="macos-window">
+      <div class="macos-titlebar">
+        <div class="macos-dot red"></div>
+        <div class="macos-dot yellow"></div>
+        <div class="macos-dot green"></div>
+        <div class="macos-title">Demo App — Dashboard · 新建项目</div>
+      </div>
+      <div class="macos-body" style="position:relative;">
+
+        <!-- 左侧边栏（保持原状） -->
+        <div class="app-sidebar">
+          <div style="padding:4px 14px 12px;display:flex;align-items:center;gap:8px;">
+            <div style="width:22px;height:22px;border-radius:5px;background:var(--primary);display:flex;align-items:center;justify-content:center;">
+              <i data-lucide="zap" style="width:12px;height:12px;color:#fff;stroke-width:2.5;"></i>
+            </div>
+            <span style="font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:-0.02em;">Demo App</span>
+          </div>
+          <div class="sidebar-section-header" style="padding-top:4px;">主要功能</div>
+          <div class="sidebar-item active"><i data-lucide="home" class="nav-icon"></i>首页</div>
+          <div class="sidebar-item"><i data-lucide="layout-grid" class="nav-icon"></i>工作台</div>
+          <div class="sidebar-item"><i data-lucide="folder" class="nav-icon"></i>资源库</div>
+          <div class="sidebar-item"><i data-lucide="bar-chart-3" class="nav-icon"></i>数据统计</div>
+          <div class="sidebar-item"><i data-lucide="settings" class="nav-icon"></i>设置</div>
+        </div>
+
+        <!-- 顶部工具栏（保持原状） -->
+        <div class="win-chrome-bar">
+          <div class="win-chrome-drag"></div>
+          <div class="win-chrome-actions">
+            <button class="win-chrome-btn" title="帮助"><i data-lucide="help-circle" class="win-chrome-icon"></i></button>
+            <div class="win-credits"><i data-lucide="coins" class="win-chrome-icon"></i><span>1,000 积分</span></div>
+            <div class="win-avatar-chip"><span class="win-avatar">U</span><span class="badge-free">FREE</span></div>
+            <button class="win-chrome-btn" title="菜单"><i data-lucide="menu" class="win-chrome-icon"></i></button>
+          </div>
+        </div>
+
+        <!-- 主区 dimmed -->
+        <div class="app-main" style="pointer-events:none;filter:brightness(0.97);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+            <div>
+              <div style="font-family:var(--font-display);font-size:20px;font-weight:700;">Dashboard</div>
+              <div style="color:var(--text-2);font-size:12px;margin-top:2px;">欢迎回来，今天有 3 项任务待处理</div>
+            </div>
+            <button class="btn btn-primary"><i data-lucide="plus" style="width:14px;height:14px;"></i>新建项目</button>
+          </div>
+          <div class="grid-3">
+            <div class="info-card"><div style="color:var(--text-2);font-size:11px;text-transform:uppercase;">活跃项目</div><div style="font-family:var(--font-display);font-size:24px;font-weight:700;margin-top:6px;">12</div></div>
+            <div class="info-card"><div style="color:var(--text-2);font-size:11px;text-transform:uppercase;">待处理任务</div><div style="font-family:var(--font-display);font-size:24px;font-weight:700;margin-top:6px;">3</div></div>
+            <div class="info-card"><div style="color:var(--text-2);font-size:11px;text-transform:uppercase;">本月用量</div><div style="font-family:var(--font-display);font-size:24px;font-weight:700;margin-top:6px;">67%</div></div>
+          </div>
+        </div>
+
+        <!-- 遮罩 -->
+        <div style="position:absolute;inset:0;background:rgba(0,0,0,0.25);z-index:10;"></div>
+
+        <!-- 弹窗 -->
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:11;">
+          <div class="form-dialog">
+            <button class="modal-close-x"><i data-lucide="x"></i></button>
+            <div class="form-dialog-title">新建项目</div>
+
+            <div class="form-group">
+              <label class="form-label">项目名称</label>
+              <input class="form-input" placeholder="给项目起个名字" value="项目 Delta" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">描述</label>
+              <textarea class="form-textarea" rows="3" placeholder="简单描述项目目标">用于演示 proto-gen 的弹窗叠加态规范</textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">类型</label>
+              <div class="form-combobox">
+                <input class="form-input" value="标准项目" readonly />
+                <button class="form-chevron"><i data-lucide="chevron-down" style="width:14px;height:14px;"></i></button>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn btn-ghost">取消</button>
+              <button class="btn btn-primary">创建</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 旁注 PRD 面板 -->
+    <div class="prd-panel-wrap">
+      <aside class="prd-panel">
+        <div class="prd-panel__title">功能概览</div>
+        <div class="prd-panel__body">
+          <div class="prd-section">
+            <div class="prd-section__title">Home-02：新建项目弹窗叠加态</div>
+            <ul>
+              <li>底层为 Home-01 dimmed 态（亮度 0.97 + pointer-events 禁用）</li>
+              <li>展示半透明遮罩（rgba(0,0,0,0.25)）覆盖主区</li>
+              <li>展示居中弹窗 form-dialog，右上角有「X」关闭按钮（modal-close-x）</li>
+              <li>展示弹窗标题「新建项目」</li>
+              <li>展示三个表单字段：项目名称（input）、描述（textarea）、类型（combobox 下拉）</li>
+              <li>展示底部操作区：「取消」（ghost）+ 「创建」（主色实心）按钮</li>
+              <li>点击遮罩、X 或取消按钮关闭弹窗，回到 Home-01</li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- end page-stack -->
+
+<script>
+  if (window.lucide) lucide.createIcons();
+
+  /* TOC 滚动高亮 */
+  (function() {
+    var sectionMap = {
+      'section-home': 'Home-01',
+      'section-modal': 'Home-02'
+    };
+    var tocItems = document.querySelectorAll('.toc-item');
+    var ticking = false;
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(function() {
+          var scrollPos = window.scrollY + 120;
+          var currentId = null;
+          var ids = Object.keys(sectionMap);
+          for (var i = ids.length - 1; i >= 0; i--) {
+            var el = document.getElementById(ids[i]);
+            if (el && el.offsetTop <= scrollPos) { currentId = ids[i]; break; }
+          }
+          tocItems.forEach(function(item) {
+            item.classList.remove('active');
+            if (item.getAttribute('href') === '#' + currentId) item.classList.add('active');
+          });
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+    if (tocItems.length > 0) tocItems[0].classList.add('active');
+  })();
+</script>
+
+</body>
+</html>

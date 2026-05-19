@@ -1,0 +1,226 @@
+# HTML 页面骨架
+
+所有原型 HTML 使用统一骨架，复制此模板后按需填入。
+
+## 完整骨架
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{页面名} · 原型</title>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="shared.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+
+<!-- 顶部导航栏 -->
+<nav class="proto-nav">
+  <a href="index.html" class="proto-back"><i data-lucide="arrow-left"></i>返回原型索引</a>
+  <span class="proto-title">{页面名}</span>
+</nav>
+
+<!-- 左侧页面索引 -->
+<nav class="toc-sidebar">
+  <div class="toc-title">页面导航</div>
+  <a class="toc-item" href="#section-xxx"><span class="toc-dot"></span>{名称}-01</a>
+  <!-- 每个 section 对应一个 toc-item -->
+</nav>
+
+<!-- 主内容区 -->
+<div class="page-stack" style="padding-top:40px;">
+
+<!-- Section 示例 -->
+<div id="section-xxx">
+  <div class="section-label">{名称}-01</div>
+  <div class="proto-with-prd">
+
+    <div class="macos-window">
+      <div class="macos-titlebar">
+        <div class="macos-dot red"></div>
+        <div class="macos-dot yellow"></div>
+        <div class="macos-dot green"></div>
+        <div class="macos-title">{App Name} — {窗口标题}</div>
+      </div>
+      <div class="macos-body">
+        <!-- 侧边栏 -->
+        <div class="app-sidebar">
+          <!-- 见 app-sidebar 模板 -->
+        </div>
+        <!-- 顶栏 -->
+        <div class="win-chrome-bar">
+          <!-- 见 win-chrome-bar 模板 -->
+        </div>
+        <!-- 主区 -->
+        <div class="app-main">
+          <!-- 页面内容 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- PRD 面板 -->
+    <div class="prd-panel-wrap">
+      <aside class="prd-panel">
+        <div class="prd-panel__title">功能概览</div>
+        <div class="prd-panel__body">
+          <div class="prd-section">
+            <div class="prd-section__title">{名称}-01：{页面短名}</div>
+            <ul>
+              <li>展示...</li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- end page-stack -->
+
+<script>
+  if (window.lucide) lucide.createIcons();
+
+  /* TOC 滚动高亮 */
+  (function() {
+    var sectionMap = {
+      'section-xxx': '{名称}-01',
+      /* 每个 section 一条 */
+    };
+    var tocItems = document.querySelectorAll('.toc-item');
+    var ticking = false;
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(function() {
+          var scrollPos = window.scrollY + 120;
+          var currentId = null;
+          var ids = Object.keys(sectionMap);
+          for (var i = ids.length - 1; i >= 0; i--) {
+            var el = document.getElementById(ids[i]);
+            if (el && el.offsetTop <= scrollPos) { currentId = ids[i]; break; }
+          }
+          tocItems.forEach(function(item) {
+            item.classList.remove('active');
+            if (item.getAttribute('href') === '#' + currentId) item.classList.add('active');
+          });
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+    if (tocItems.length > 0) tocItems[0].classList.add('active');
+  })();
+</script>
+
+</body>
+</html>
+```
+
+---
+
+## app-sidebar 标准模板
+
+```html
+<div class="app-sidebar">
+  <div style="padding:4px 14px 12px;display:flex;align-items:center;gap:8px;">
+    <div style="width:22px;height:22px;border-radius:5px;background:var(--primary);display:flex;align-items:center;justify-content:center;">
+      <i data-lucide="zap" style="width:12px;height:12px;color:#fff;stroke-width:2.5;"></i>
+    </div>
+    <span style="font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:-0.02em;">{App Name}</span>
+  </div>
+  <div class="sidebar-section-header" style="padding-top:4px;">主要功能</div>
+  <div class="sidebar-item {active?}"><i data-lucide="home" class="nav-icon"></i>首页</div>
+  <div class="sidebar-item {active?}"><i data-lucide="layout-grid" class="nav-icon"></i>工作台</div>
+  <div class="sidebar-item {active?}"><i data-lucide="folder" class="nav-icon"></i>资源库</div>
+  <div class="sidebar-item {active?}"><i data-lucide="bar-chart-3" class="nav-icon"></i>数据统计</div>
+  <div class="sidebar-item {active?}"><i data-lucide="settings" class="nav-icon"></i>设置</div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section-header">收藏夹</div>
+  <div class="sidebar-apps">
+    <div class="sidebar-item"><span class="nav-icon" style="background:linear-gradient(135deg,#6366F1,#818cf8);color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:3px;">A</span>项目 Alpha</div>
+    <div class="sidebar-item"><span class="nav-icon" style="background:linear-gradient(135deg,#10B981,#34d399);color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:3px;">B</span>项目 Beta</div>
+    <div class="sidebar-item"><span class="nav-icon" style="background:linear-gradient(135deg,#F59E0B,#fbbf24);color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:3px;">G</span>项目 Gamma</div>
+  </div>
+</div>
+```
+
+当前页对应的 sidebar-item 加 `class="sidebar-item active"`。
+侧边栏分组名称（主要功能 / 收藏夹）和具体导航项请根据实际产品功能替换。
+
+---
+
+## win-chrome-bar 标准模板
+
+```html
+<div class="win-chrome-bar">
+  <div class="win-chrome-drag"></div>
+  <div class="win-chrome-actions">
+    <button class="win-chrome-btn" title="帮助"><i data-lucide="help-circle" class="win-chrome-icon"></i></button>
+    <div class="win-credits"><i data-lucide="coins" class="win-chrome-icon"></i><span>1,000 积分</span></div>
+    <div class="win-avatar-chip"><span class="win-avatar">U</span><span class="badge-free">FREE</span></div>
+    <button class="win-chrome-btn" title="菜单"><i data-lucide="menu" class="win-chrome-icon"></i></button>
+  </div>
+</div>
+```
+
+---
+
+## 弹窗叠加态结构
+
+弹窗 section 使用 `position:relative` 的 `macos-body`，在其内加遮罩 + 弹窗：
+
+```html
+<div class="macos-body" style="position:relative;">
+  <!-- 正常 sidebar + chrome-bar + app-main（主区内容灰暗，pointer-events:none） -->
+  <div class="app-main" style="pointer-events:none;filter:brightness(0.97);">
+    <!-- 主区内容原样保留 -->
+  </div>
+  <!-- 遮罩 -->
+  <div style="position:absolute;inset:0;background:rgba(0,0,0,0.25);z-index:10;"></div>
+  <!-- 弹窗 -->
+  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:11;">
+    <div class="form-dialog">
+      <button class="modal-close-x"><i data-lucide="x"></i></button>
+      <div class="form-dialog-title">弹窗标题</div>
+      <!-- 表单内容 -->
+    </div>
+  </div>
+</div>
+```
+
+---
+
+## 抽屉叠加态结构
+
+```html
+<div class="macos-body" style="position:relative;">
+  <!-- 主区正常内容（被查看行加高亮背景） -->
+  <!-- 遮罩 -->
+  <div style="position:absolute;inset:0;background:rgba(0,0,0,0.25);z-index:10;"></div>
+  <!-- 右侧抽屉 -->
+  <div style="position:absolute;top:0;right:0;bottom:0;width:320px;background:var(--surface);border-left:1px solid var(--border);z-index:11;display:flex;flex-direction:column;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);">
+      <span style="font-weight:600;font-size:13px;">抽屉标题</span>
+      <button class="modal-close-x" style="position:static;"><i data-lucide="x"></i></button>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:16px 18px;">
+      <!-- 抽屉内容 -->
+    </div>
+  </div>
+</div>
+```
+
+---
+
+## nav-icon 规范
+
+`nav-icon` 统一 `width:16px;height:16px;flex-shrink:0`。
+- Lucide 图标：`<i data-lucide="xxx" class="nav-icon"></i>`
+- lobehub 彩色 SVG（如需展示具体品牌）：`<img class="nav-icon" src="https://unpkg.com/@lobehub/icons-static-svg@latest/icons/{name}.svg" alt="">`
+- 首字母兜底块：`<span class="nav-icon" style="background:linear-gradient(135deg,#xxx,#yyy);color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:3px;">X</span>`
+
+常用 lobehub 图标名（按需引用真实品牌时使用）：`claude-color`、`openai`、`cursor`、`deepseek-color`、`gemini-color`、`github`

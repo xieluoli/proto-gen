@@ -1,0 +1,23 @@
+{
+  "skill_name": "proto-gen",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "给任务管理功能做一个原型，包含：任务列表主页（展示任务卡片，每张卡片显示标题、描述、状态 badge）、以及添加任务的弹窗（表单：标题、描述、截止日期、优先级）。保存到 prototypes/task-mgmt.html",
+      "expected_output": "生成 task-mgmt.html，包含：完整的 page-stack 结构（proto-nav + toc-sidebar + page-stack）；任务列表主页（含 app-sidebar + win-chrome-bar + 任务卡片网格）；添加弹窗叠加态（含表单 + form-actions）；每个 section 旁边有 prd-panel；HTML 使用 shared.css 组件类，不自造类名",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "帮我生成插件管理页面的原型。需要包含：插件列表（卡片展示插件名、描述、状态、版本号）、添加插件弹窗（支持两种来源：在线商店 URL、本地文件路径）、插件详情抽屉（右侧弹出，展示插件配置参数和功能列表）。保存到 prototypes/plugin-mgmt.html",
+      "expected_output": "生成 plugin-mgmt.html，包含：3 个 section（列表主页、添加弹窗叠加态、详情抽屉叠加态）；每个 section 带 prd-panel；弹窗态使用遮罩 + form-dialog 结构；抽屉态使用右侧抽屉结构；真实示例数据；侧边栏有插件管理导航项 active 高亮",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "基于这个简单描述做一个原型：「通知偏好设置页，用户可以开关不同渠道的通知（邮件、Webhook、桌面推送），每个渠道可以配置触发条件」。保存到 prototypes/notification.html",
+      "expected_output": "生成 notification.html，包含：通知设置主页；展示 3 种通知渠道卡片，每个渠道有 toggle 开关；触发条件用 checkbox 或 toggle 列表；正确使用 toggle-switch 组件；prd-panel 内容与 UI 一一对应；使用真实示例数据",
+      "files": []
+    }
+  ]
+}
