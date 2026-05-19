@@ -4,6 +4,10 @@
 
 适合在产品 MVP 阶段做方案演示与评审：把脑子里的构思一键变成可在浏览器打开的、带页面索引和功能旁注的可视化原型。
 
+![proto-gen 示例截图](assets/screenshots/example-home.png)
+
+> 上图为 [`assets/example.html`](assets/example.html) 渲染效果，完整版（含弹窗叠加态）见 [`assets/screenshots/example-full.png`](assets/screenshots/example-full.png)。
+
 ## 这是什么
 
 一套带[完整设计系统](assets/shared.css)的原型生成器。给一段需求描述（"做个任务管理页，列表 + 添加弹窗"），生成一个：
@@ -12,8 +16,6 @@
 - 多个 section 垂直堆叠（主页 / 弹窗 / 抽屉 ...）
 - 每个 section 旁边带 **PRD 旁注面板**（功能概览，跟 UI 一一对应）
 - 顶部带页面索引（toc-sidebar）滚动高亮
-
-效果可以打开 [`assets/example.html`](assets/example.html) 直接看。
 
 ## 安装
 
