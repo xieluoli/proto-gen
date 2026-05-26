@@ -72,3 +72,30 @@ cp ~/.claude/skills/proto-gen/assets/prd-highlight.js your-project/prototypes/
 - [[html-structure]]：讲页面骨架（toc + macos-window + prd-panel），不涉及 hover 联动
 - [[prd-rules]]：讲 bullet 文案怎么写、条件分支怎么表达
 - **本文件**：讲 bullet 与组件**怎么绑定**（机械层）
+
+## 交付给研发时（重要）
+
+`data-comp` / `data-target` / `prd-highlight.js` / `shared.css` 末尾 4 条高亮规则都是**评审脚手架**（PRD ↔ 原型 对照工具），**不属于业务逻辑**。研发把原型 HTML 转 React / Vue / Tauri / 原生组件时，**这些资产应全部丢弃**，不要照搬到生产代码里。
+
+### 研发应丢弃的清单
+
+| 类别 | 字面识别 | 处理 |
+|---|---|---|
+| HTML 属性 | `data-comp="..."` | 全部删除 |
+| HTML 属性 | `data-target="..."` | 全部删除 |
+| HTML script 引用 | `<script src="prd-highlight.js"` 那一行 | 整行删除 |
+| 文件 | `prd-highlight.js` | 不要拷到工程 |
+| CSS | `shared.css` 末尾「PRD ↔ 原型 双向高亮联动」段（4 条规则） | 复用 shared.css 时整段删 |
+
+### 一行 grep 自检（在原型目录跑）
+
+```bash
+# 输出应为空（输出说明研发版还有评审脚手架残留）
+grep -nE "data-(comp|target)|prd-highlight|is-highlight|is-bullet-active" your-prod-code/
+```
+
+### 写在交付物的醒目位置
+
+把原型 HTML 交付给研发 / 研发 Agent 时，建议在邮件 / PR 描述 / README 顶部注明：
+
+> 本原型含 `data-comp` / `data-target` 属性、`prd-highlight.js`、`shared.css` 末尾高亮规则——全部是评审脚手架，**研发实现时请整套丢弃**，不要进入生产代码。

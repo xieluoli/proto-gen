@@ -61,7 +61,7 @@ description: >
 | `references/html-structure.md` | 页面骨架 + 三种叠加态（modal / drawer / subpage） | PC · macOS 系列 |
 | `references/css-components.md` | 全部 CSS 组件类、设计 token、视觉食谱 | PC · macOS 系列 |
 | `references/prd-rules.md` | PRD bullets 写法、元素描述模板、重复内容引用规则 | 设备无关 |
-| `references/prd-highlight.md` | PRD ↔ 原型 双向 hover 联动：`data-comp` / `data-target` 命名约定、scope、易踩坑 | 设备无关 |
+| `references/prd-highlight.md` | PRD ↔ 原型 双向 hover 联动：`data-comp` / `data-target` 命名约定、scope、易踩坑、**交付给研发时的剥离须知** | 设备无关 |
 
 ## 工作目录
 
