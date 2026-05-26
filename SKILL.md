@@ -11,6 +11,38 @@ description: >
 
 本 skill 生成统一风格的高保真 HTML 原型，适合 Web/桌面应用产品 MVP 阶段的方案演示与评审。
 
+## 设备系列
+
+| 系列 | 状态 | 外壳容器 | 适用 reference |
+|---|---|---|---|
+| **PC · macOS** | ✅ 当前覆盖 | `macos-window` / `macos-titlebar` / `macos-body` + `app-sidebar` / `win-chrome-bar` / `app-main` | 现有 `references/*.md` 全部 |
+| **Mobile** | 🚧 规划中 | 拟用 `mobile-frame` / `mobile-statusbar` / `mobile-tabbar`（待落地） | 后续以独立文件扩展（如 `references/html-structure-mobile.md`），不混入现有 |
+
+> 当前所有原型骨架与组件描述均基于 PC · macOS 系列。引入 Mobile 系列时，**新增独立 reference 文件**而不是覆写现有，避免设备形态混淆。
+
+## 三段结构契约
+
+每个原型 HTML 文件由**三段固定结构**组成，任何 section 都必须遵守：
+
+```
+┌──────────────┬──────────────────────────────┬──────────────────┐
+│              │                              │                  │
+│ toc-sidebar  │   原型图(macos-window)       │  功能概览        │
+│              │                              │  (prd-panel)     │
+│ (全文件共享) │   ←──── 一一对应 ────→       │                  │
+│              │                              │                  │
+└──────────────┴──────────────────────────────┴──────────────────┘
+                       一个 .proto-with-prd 组合块
+```
+
+约束：
+
+1. **toc-sidebar 全文件唯一**：所有 section 共用同一个左侧索引，每个 section 一条 toc-item
+2. **原型图 ↔ 功能概览 一一对应**：每个 section 内一个 `.proto-with-prd` 包**恰好一个**外壳 + **恰好一个** `.prd-panel`
+3. **不允许「一图多 PRD」**（一个外壳塞多个 prd-section 拆给多个状态）
+4. **不允许「PRD 拆给多图」**（一个 prd-panel 描述跨多个外壳的内容）
+5. 此契约**设备无关**——Mobile 系列引入后仍维持三段结构，只是外壳容器换成 `mobile-frame`
+
 ## 设计系统资产
 
 本 skill 自带一套设计系统：
@@ -20,6 +52,14 @@ description: >
 
 > 首次使用：把 `assets/shared.css` 拷贝到目标项目的原型目录下，所有生成的 HTML 通过相对路径 `href="shared.css"` 引用。
 > 想快速预览整体风格，直接在浏览器打开 `assets/example.html`。
+
+## References 总览
+
+| 文件 | 内容 | 设备适用 |
+|---|---|---|
+| `references/html-structure.md` | 页面骨架 + 三种叠加态（modal / drawer / subpage） | PC · macOS 系列 |
+| `references/css-components.md` | 全部 CSS 组件类、设计 token、视觉食谱 | PC · macOS 系列 |
+| `references/prd-rules.md` | PRD bullets 写法、元素描述模板、重复内容引用规则 | 设备无关 |
 
 ## 工作目录
 

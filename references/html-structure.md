@@ -1,5 +1,7 @@
 # HTML 页面骨架
 
+> **适用范围**：PC · macOS 系列。Mobile 系列后续以独立文件扩展（如 `html-structure-mobile.md`），不混入本文件。
+
 所有原型 HTML 使用统一骨架，复制此模板后按需填入。
 
 ## 完整骨架
@@ -23,6 +25,8 @@
   <a href="index.html" class="proto-back"><i data-lucide="arrow-left"></i>返回原型索引</a>
   <span class="proto-title">{页面名}</span>
 </nav>
+
+<div class="proto-toc-layout">
 
 <!-- 左侧页面索引 -->
 <nav class="toc-sidebar">
@@ -81,6 +85,8 @@
 </div>
 
 </div><!-- end page-stack -->
+
+</div><!-- end proto-toc-layout -->
 
 <script>
   if (window.lucide) lucide.createIcons();
@@ -213,6 +219,72 @@
   </div>
 </div>
 ```
+
+---
+
+## 叠加态决策：modal / drawer / subpage 怎么选
+
+| 形态 | 何时用 | 容器类 |
+|------|------|------|
+| **modal 弹窗** | 确认 / 短表单（≤3 字段） / destructive confirm | `.form-dialog` + 居中遮罩 |
+| **drawer 抽屉** | 详情查看 / 列表筛选 / 队列任务列表 | 右侧 320px 抽屉 + 遮罩 |
+| **subpage 子页** | 长表单（≥4 字段） / 多 tab 配置 / 创建&编辑场景 | `.channel-subpage` 替换整个 `app-main` |
+
+判断要点：
+- 字段一多，modal 会顶到视口边缘 → 走 subpage
+- 不需要保留对底层主区的视觉参照 → 走 subpage（不需要遮罩）
+- 用户操作意图是"切换到另一个工作面"而非"在当前页弹一个东西" → 走 subpage
+
+---
+
+## 子页（subpage）结构
+
+子页**整体替换 `app-main` 内容**，不走遮罩、不悬浮——和 modal/drawer 的区别在于它本身就是新页面。适合创建 / 编辑等长表单场景。
+
+```html
+<div class="app-main">
+  <div class="channel-subpage">
+    <div class="channel-subpage__head">
+      <div>
+        <div class="section-title">子页标题</div>
+        <div class="section-desc" style="margin-bottom:0;">副标题说明</div>
+      </div>
+      <button class="subpage-close-x" aria-label="取消">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
+    <!-- 表单字段 form-group * N -->
+    <div class="form-group">
+      <label class="form-label">字段名</label>
+      <input class="form-input" />
+    </div>
+
+    <!-- 底部按钮 -->
+    <div class="form-actions">
+      <button class="btn btn-ghost btn-sm">取消</button>
+      <button class="btn btn-primary btn-sm">保存</button>
+    </div>
+  </div>
+</div>
+```
+
+可选：head 右上角除 `subpage-close-x` 外可叠加一个辅助操作按钮（如「恢复到默认」）：
+
+```html
+<div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+  <button class="btn btn-ghost btn-sm">
+    <i data-lucide="rotate-ccw" style="width:12px;height:12px;margin-right:4px;"></i>恢复到默认
+  </button>
+  <button class="subpage-close-x"><i data-lucide="x"></i></button>
+</div>
+```
+
+要点：
+
+- `subpage-close-x` 等效底部「取消」按钮
+- 进入路径：通常由列表页主按钮触发（如「+ 添加 X」），或卡片 hover 操作中的「编辑」图标触发
+- 子页与底层列表页**互斥呈现**——不像 modal/drawer 那样保留底层视觉
 
 ---
 
