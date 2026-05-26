@@ -15,6 +15,7 @@
 - 左侧 **toc-sidebar**：全文件页面索引，滚动高亮
 - 中间 **原型图**：macOS 窗口外壳（左侧栏 + 顶部工具栏 + 内容区），多 section 垂直堆叠（主页 / 弹窗 / 抽屉 / 子页 ...）
 - 右侧 **功能概览**：每个 section 一个 PRD 面板，与原型图**一一对应**
+- **PRD ↔ 原型 双向高亮**：hover 任一 PRD bullet → 自动高亮对应原型组件（反向亦然），评审时跨视图对照零成本
 
 > 当前覆盖 **PC · macOS 系列**；Mobile 系列规划中（外壳容器与对应 reference 后续独立扩展）。
 
@@ -40,11 +41,12 @@ Claude Code 启动时会自动加载所有 `~/.claude/skills/*` 下的 skill。
 
 触发关键词（在你的指令里包含其中一个就行）：生成原型、新建原型、写原型、画原型、做个原型、新增一个 html、新建 html 原型。
 
-第一次使用时，需要把 [`assets/shared.css`](assets/shared.css) 拷到你项目的原型目录下，所有生成的 HTML 通过相对路径 `href="shared.css"` 引用：
+第一次使用时，需要把 [`assets/shared.css`](assets/shared.css) 和 [`assets/prd-highlight.js`](assets/prd-highlight.js) 拷到你项目的原型目录下，所有生成的 HTML 通过相对路径引用：
 
 ```bash
 mkdir -p your-project/prototypes
 cp ~/.claude/skills/proto-gen/assets/shared.css your-project/prototypes/
+cp ~/.claude/skills/proto-gen/assets/prd-highlight.js your-project/prototypes/
 ```
 
 之后告诉 Claude "把生成的 HTML 放到 `your-project/prototypes/` 下" 即可。
@@ -55,12 +57,14 @@ cp ~/.claude/skills/proto-gen/assets/shared.css your-project/prototypes/
 proto-gen/
 ├── SKILL.md                       skill 入口（Claude Code 加载）
 ├── assets/
-│   ├── shared.css                 完整设计系统（颜色/字体/组件/PRD 面板）
+│   ├── shared.css                 完整设计系统（颜色/字体/组件/PRD 面板/高亮规则）
+│   ├── prd-highlight.js           PRD ↔ 原型 双向 hover 联动运行时
 │   └── example.html               独立可运行示例
 ├── references/
 │   ├── html-structure.md          HTML 骨架 + modal/drawer/subpage 三态决策（PC·macOS）
 │   ├── css-components.md          CSS 组件速查 + 视觉食谱（PC·macOS）
-│   └── prd-rules.md               PRD bullets 写法 + 条件分支/重复引用规则（设备无关）
+│   ├── prd-rules.md               PRD bullets 写法 + 条件分支/重复引用规则（设备无关）
+│   └── prd-highlight.md           data-comp / data-target 命名约定 + 易踩坑（设备无关）
 └── evals/
     └── evals.json                 测试用例（可选）
 ```

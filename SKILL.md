@@ -48,9 +48,10 @@ description: >
 本 skill 自带一套设计系统：
 
 - `assets/shared.css` — 完整设计 token + 组件类（颜色、字体、按钮、卡片、弹窗、表单、PRD 面板等）
+- `assets/prd-highlight.js` — PRD ↔ 原型 双向 hover 联动运行时（与 `shared.css` 末尾的高亮规则配套）
 - `assets/example.html` — 最小可运行示例，展示 macOS 窗口（左侧边栏 + 顶部工具栏 + 内容区） + 旁注 PRD 面板的整体布局
 
-> 首次使用：把 `assets/shared.css` 拷贝到目标项目的原型目录下，所有生成的 HTML 通过相对路径 `href="shared.css"` 引用。
+> 首次使用：把 `assets/shared.css` 和 `assets/prd-highlight.js` 一起拷到目标项目的原型目录下，所有生成的 HTML 通过相对路径 `href="shared.css"` + `<script src="prd-highlight.js" defer>` 引用。
 > 想快速预览整体风格，直接在浏览器打开 `assets/example.html`。
 
 ## References 总览
@@ -60,6 +61,7 @@ description: >
 | `references/html-structure.md` | 页面骨架 + 三种叠加态（modal / drawer / subpage） | PC · macOS 系列 |
 | `references/css-components.md` | 全部 CSS 组件类、设计 token、视觉食谱 | PC · macOS 系列 |
 | `references/prd-rules.md` | PRD bullets 写法、元素描述模板、重复内容引用规则 | 设备无关 |
+| `references/prd-highlight.md` | PRD ↔ 原型 双向 hover 联动：`data-comp` / `data-target` 命名约定、scope、易踩坑 | 设备无关 |
 
 ## 工作目录
 
@@ -110,6 +112,7 @@ description: >
 - 按页面从上到下视觉顺序排列
 - 一个元素一条 bullet，句式见规范
 - **重复内容处理**：第一个 section 完整描述；后续 section 对相同通用结构用引用，只描述差异
+- **顺手绑定 highlight**：按 `references/prd-highlight.md` 给 bullet 加 `data-target="<key>"`、给原型组件加 `data-comp="<key>"`，开启 PRD ↔ 原型 双向 hover 联动
 
 ### 5. 组装 HTML
 
@@ -120,6 +123,7 @@ description: >
 ## 输出文件
 
 - **HTML 原型**：`{user-dir}/{name}.html`（包含全部 sections）
+- **运行时依赖**：`{user-dir}/shared.css` + `{user-dir}/prd-highlight.js`（首次使用时各拷一份；同目录下所有原型 HTML 共用）
 - **（可选）PRD md**：如用户需要，同步生成 `{name}.md`
 
 ## 验证
