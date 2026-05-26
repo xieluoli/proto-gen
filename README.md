@@ -10,12 +10,13 @@
 
 ## 这是什么
 
-一套带[完整设计系统](assets/shared.css)的原型生成器。给一段需求描述（"做个任务管理页，列表 + 添加弹窗"），生成一个：
+一套带[完整设计系统](assets/shared.css)的原型生成器。给一段需求描述（"做个任务管理页，列表 + 添加弹窗"），生成符合**三段结构契约**的 HTML：
 
-- macOS 窗口风格（左侧栏 + 顶部工具栏 + 内容区）
-- 多个 section 垂直堆叠（主页 / 弹窗 / 抽屉 ...）
-- 每个 section 旁边带 **PRD 旁注面板**（功能概览，跟 UI 一一对应）
-- 顶部带页面索引（toc-sidebar）滚动高亮
+- 左侧 **toc-sidebar**：全文件页面索引，滚动高亮
+- 中间 **原型图**：macOS 窗口外壳（左侧栏 + 顶部工具栏 + 内容区），多 section 垂直堆叠（主页 / 弹窗 / 抽屉 / 子页 ...）
+- 右侧 **功能概览**：每个 section 一个 PRD 面板，与原型图**一一对应**
+
+> 当前覆盖 **PC · macOS 系列**；Mobile 系列规划中（外壳容器与对应 reference 后续独立扩展）。
 
 ## 安装
 
@@ -57,9 +58,9 @@ proto-gen/
 │   ├── shared.css                 完整设计系统（颜色/字体/组件/PRD 面板）
 │   └── example.html               独立可运行示例
 ├── references/
-│   ├── html-structure.md          HTML 骨架模板（含 sidebar / chrome-bar / 弹窗 / 抽屉）
-│   ├── css-components.md          CSS 组件速查（按钮/输入/卡片/Badge/Tabs/Toggle/弹窗）
-│   └── prd-rules.md               PRD bullets 写作规范 + 重复内容引用规则
+│   ├── html-structure.md          HTML 骨架 + modal/drawer/subpage 三态决策（PC·macOS）
+│   ├── css-components.md          CSS 组件速查 + 视觉食谱（PC·macOS）
+│   └── prd-rules.md               PRD bullets 写法 + 条件分支/重复引用规则（设备无关）
 └── evals/
     └── evals.json                 测试用例（可选）
 ```
