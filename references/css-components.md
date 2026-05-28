@@ -252,6 +252,26 @@
 - `.is-disabled` 修饰符：渲染禁用态（灰色 + `not-allowed` 光标 + 透明 hover 背景），点击无响应；`.ca-tip` 文案用于解释禁用原因，避免歧义
 - 演示态可加 `.show-actions` 修饰符强制操作条可见（用于截图/原型审查）
 
+### 空状态占位卡片（empty-state placeholder card）
+
+列表/库为空时的兜底卡片，主 CTA 下沉到卡内：虚线边框 + 透明背景 + 居中加号徽块 + 主标题 + 副标题，整卡可点击。适用「空库 → 引导添加首条数据」类场景。
+
+```html
+<div class="empty-card" onclick="...打开添加子页...">
+  <div class="empty-card__icon"><i data-lucide="plus" style="width:18px;height:18px;"></i></div>
+  <div class="empty-card__title">点击添加{对象名}</div>
+  <div class="empty-card__desc">{一句话引导，说明配置完后能做什么}</div>
+</div>
+```
+
+要点：
+
+- 与 `.channel-card`（实心已填充态）形成**视觉对比**——虚线 vs 实线、透明 vs 白底
+- hover 时主色边框 + 浅主色背景（`--primary-light`），强化可点击性
+- 顶部不需要再放「+ 添加」按钮——避免双 CTA 噪音；主 CTA 已下沉到占位卡内
+- 副标题用 `--text-3` 弱化，主标题用 `--text` 加粗
+- 适用「空渠道库 / 空 Agent 库 / 空 Skill 库 / 空收件箱」等所有需要引导首条数据的场景
+
 ---
 
 ## Badge

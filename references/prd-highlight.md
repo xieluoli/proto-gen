@@ -44,15 +44,31 @@ cp ~/.claude/skills/proto-gen/assets/prd-highlight.js your-project/prototypes/
 | 状态标识 | `badge-<语义>` | `badge-default` / `badge-warn` |
 | 子操作 | `<父>-<动词>` | `channel-act-delete` / `channel-act-apply` |
 
-## 视觉键分离原则
+## 状态命名分层（业务态 vs 评审态）
+
+原型里出现的「状态类」分两层，**命名风格刻意区分，便于一眼判断哪些交付时要剥离**：
+
+| 层 | 命名约定 | 例 | 交付研发时 |
+|---|---|---|---|
+| **业务态**（用户实际可触发） | BEM `--<state>` 修饰符 / `.active` / `.expanded` 等业务语义 | `agent-tab--active` / `inline-tab.active` / `model-badges.expanded` / `btn--disabled` | **保留**（研发原样译为 React state / Vue class） |
+| **评审脚手架**（PRD ↔ 原型 对照） | **`.is-*` 命名空间**专用 | `.is-highlight` / `.is-bullet-active` | **整段丢弃**（grep `.is-*` 一行 sed 清完） |
+
+为什么要分层：
+
+- 业务态是**产品事实**——交付后还在，研发必须实现
+- 评审态是**评审工具**——只在原型评审期间有意义，进生产代码就是噪音
+- 写新状态时先问自己：「这个状态用户真的能触发吗？」是 → BEM `--`；只是 PRD 标注 → `.is-*`
+
+视觉键也要刻意区分：
 
 | 状态 | 视觉键 | 用途 |
 |---|---|---|
 | 组件自身 `:hover` | background 变化 / 操作浮层显形 | 用户与组件直接交互 |
-| **高亮态 `.is-highlight`** | **outline + 外发光** | PRD ↔ 原型 跨视图对照 |
-| 卡片锚定 `.is-bullet-active` | inset 浅 indigo 边框 | bullet hover 时给所属卡片加视觉锚（解决"组件太小/在角落难发现"） |
+| 业务态 BEM `--active` 等 | background / 描边 / 加粗 / icon 切换（按场景） | 表达产品状态 |
+| **评审态 `.is-highlight`** | **outline + 外发光** | PRD ↔ 原型 跨视图对照 |
+| 评审态 `.is-bullet-active` | inset 浅 indigo 边框 | bullet hover 时给所属卡片加视觉锚（解决"组件太小/在角落难发现"） |
 
-不要把 `.is-highlight` 改成 background 变化——会与 `:hover` 互相覆盖、互相干扰。
+不要把 `.is-highlight` 改成 background 变化——会与 `:hover` / 业务态互相覆盖、互相干扰。**`.is-*` 命名空间专属评审脚手架**，业务态绝不用 `is-` 前缀，否则 grep 自检会误伤。
 
 ## 易踩坑
 
