@@ -162,10 +162,10 @@
 ```html
 <div class="app-sidebar">
   <div style="padding:4px 14px 12px;display:flex;align-items:center;gap:8px;">
-    <div style="width:22px;height:22px;border-radius:5px;background:var(--primary);display:flex;align-items:center;justify-content:center;">
-      <i data-lucide="zap" style="width:12px;height:12px;color:#fff;stroke-width:2.5;"></i>
+    <div style="width:22px;height:22px;border-radius:var(--radius-chip);background:var(--primary);display:flex;align-items:center;justify-content:center;">
+      <i data-lucide="zap" style="width:12px;height:12px;color:var(--primary-foreground);stroke-width:2.5;"></i>
     </div>
-    <span style="font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:-0.02em;">{App Name}</span>
+    <span style="font-family:var(--font-sans);font-size:14px;font-weight:600;letter-spacing:-0.02em;">{App Name}</span>
   </div>
   <div class="sidebar-section-header" style="padding-top:4px;">主要功能</div>
   <div class="sidebar-item {active?}"><i data-lucide="home" class="nav-icon"></i>首页</div>
@@ -176,9 +176,9 @@
   <div class="sidebar-divider"></div>
   <div class="sidebar-section-header">收藏夹</div>
   <div class="sidebar-apps">
-    <div class="sidebar-item"><span class="nav-icon" style="background:linear-gradient(135deg,#6366F1,#818cf8);color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:3px;">A</span>项目 Alpha</div>
-    <div class="sidebar-item"><span class="nav-icon" style="background:linear-gradient(135deg,#10B981,#34d399);color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:3px;">B</span>项目 Beta</div>
-    <div class="sidebar-item"><span class="nav-icon" style="background:linear-gradient(135deg,#F59E0B,#fbbf24);color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:3px;">G</span>项目 Gamma</div>
+    <div class="sidebar-item"><span class="nav-icon" style="background:linear-gradient(135deg,var(--primary),color-mix(in oklch,var(--primary) 70%,white));color:var(--primary-foreground);font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--radius-chip);">A</span>项目 Alpha</div>
+    <div class="sidebar-item"><span class="nav-icon" style="background:linear-gradient(135deg,var(--success),color-mix(in oklch,var(--success) 70%,white));color:var(--primary-foreground);font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--radius-chip);">B</span>项目 Beta</div>
+    <div class="sidebar-item"><span class="nav-icon" style="background:linear-gradient(135deg,var(--warning),color-mix(in oklch,var(--warning) 70%,white));color:var(--primary-foreground);font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--radius-chip);">G</span>项目 Gamma</div>
   </div>
 </div>
 ```

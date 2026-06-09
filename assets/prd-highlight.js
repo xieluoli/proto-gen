@@ -7,7 +7,7 @@
  *   3) 多对一写法：data-target="key1,key2"（hover 该 bullet 高亮多个组件）
  *
  * Scope：每个 .proto-with-prd 是独立命名空间，跨 section 不传染。
- * 视觉键：outline + 浅 indigo 描边 / 外发光，与组件自身 :hover 的 background 完全分离。
+ * 视觉键：outline + var(--primary) 描边（跟随当前主题）/ 外发光，与组件自身 :hover 的 background 完全分离。
  */
 (function() {
   function init() {

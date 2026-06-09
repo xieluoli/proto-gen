@@ -7,7 +7,7 @@
 
 在每个原型 section 内，**hover 任一条 PRD bullet → 自动高亮对应原型组件**；反向同样成立（hover 原型组件 → 高亮对应 bullet）。用于评审时快速跨视图对照。
 
-视觉表现：indigo (#6366F1) 描边 + 外发光，与组件自身 `:hover` 状态（通常是 background 变化）**完全分离的视觉键**——不互相覆盖、不混淆。
+视觉表现：`var(--primary)` 主色描边（默认 724-1 紫，跟随主题）+ 外发光，与组件自身 `:hover` 状态（通常是 background 变化）**完全分离的视觉键**——不互相覆盖、不混淆。
 
 ## 接入步骤
 
@@ -66,7 +66,7 @@ cp ~/.claude/skills/proto-gen/assets/prd-highlight.js your-project/prototypes/
 | 组件自身 `:hover` | background 变化 / 操作浮层显形 | 用户与组件直接交互 |
 | 业务态 BEM `--active` 等 | background / 描边 / 加粗 / icon 切换（按场景） | 表达产品状态 |
 | **评审态 `.is-highlight`** | **outline + 外发光** | PRD ↔ 原型 跨视图对照 |
-| 评审态 `.is-bullet-active` | inset 浅 indigo 边框 | bullet hover 时给所属卡片加视觉锚（解决"组件太小/在角落难发现"） |
+| 评审态 `.is-bullet-active` | inset 浅 primary 边框（跟随主题） | bullet hover 时给所属卡片加视觉锚（解决"组件太小/在角落难发现"） |
 
 不要把 `.is-highlight` 改成 background 变化——会与 `:hover` / 业务态互相覆盖、互相干扰。**`.is-*` 命名空间专属评审脚手架**，业务态绝不用 `is-` 前缀，否则 grep 自检会误伤。
 
