@@ -43,9 +43,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>{页面名} · 原型</title>
-<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet" />
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="shared.css" />
+<link rel="stylesheet" href="theme.css" />         <!-- 主题 token + 字体 CDN（默认 724-1，可通过 extract-theme.sh 切换） -->
+<link rel="stylesheet" href="shared.css" />        <!-- 组件类骨架 -->
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -56,20 +55,21 @@
   <span class="proto-title">{页面名}</span>
 </nav>
 
-<div class="proto-toc-layout">
+<!-- 三栏布局：左 TOC（sticky 卡片）+ 中原型纵列 + 右 PRD（每个 section 内 sticky） -->
+<div class="proto-layout">
 
-<!-- 左侧页面索引 -->
-<nav class="toc-sidebar">
-  <div class="toc-title">页面导航</div>
-  <a class="toc-item" href="#section-xxx"><span class="toc-dot"></span>{名称}-01</a>
-  <!-- 每个 section 对应一个 toc-item -->
-</nav>
+  <!-- 左侧页面索引：sticky 卡片，跟随滚动 -->
+  <nav class="toc-sidebar">
+    <div class="toc-title">页面导航</div>
+    <a class="toc-item" href="#section-xxx"><span class="toc-dot"></span>{名称}-01</a>
+    <!-- 每个 section 对应一个 toc-item -->
+  </nav>
 
-<!-- 主内容区 -->
-<div class="page-stack" style="padding-top:40px;">
+  <!-- 原型纵列：每个 section 是一个 proto-stack -->
+  <div class="sections-col">
 
 <!-- Section 示例 -->
-<div id="section-xxx">
+<div id="section-xxx" class="proto-stack">
   <div class="section-label">{名称}-01</div>
   <div class="proto-with-prd">
 
@@ -114,9 +114,8 @@
   </div>
 </div>
 
-</div><!-- end page-stack -->
-
-</div><!-- end proto-toc-layout -->
+  </div><!-- end .sections-col -->
+</div><!-- end .proto-layout -->
 
 <script>
   if (window.lucide) lucide.createIcons();

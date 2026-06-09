@@ -22,18 +22,35 @@ description: >
 
 ## 三段结构契约
 
-每个原型 HTML 文件由**三段固定结构**组成，任何 section 都必须遵守：
+每个原型 HTML 文件由**三段固定结构**组成，任何 section 都必须遵守。骨架类名见 [`references/html-structure.md`](references/html-structure.md)。
 
 ```
+.proto-layout (灰底桌面，flex 横排，gap 24)
 ┌──────────────┬──────────────────────────────┬──────────────────┐
 │              │                              │                  │
 │ toc-sidebar  │   原型图(macos-window)       │  功能概览        │
-│              │                              │  (prd-panel)     │
-│ (全文件共享) │   ←──── 一一对应 ────→       │                  │
+│ 280px sticky │   1460×910（macOS 桌面感）   │  prd-panel       │
+│ 卡片         │                              │  360px sticky    │
+│ (全文件共享) │   ←──── 一一对应 ────→       │  卡片            │
 │              │                              │                  │
 └──────────────┴──────────────────────────────┴──────────────────┘
-                       一个 .proto-with-prd 组合块
+   toc-sidebar     sections-col (纵向堆叠每个 .proto-stack)
+                     │
+                     └─ 每个 .proto-stack = section-label + .proto-with-prd
+                                                          │
+                                                          └─ macos-window + prd-panel
 ```
+
+**布局规范**（实施于 `assets/shared.css`，原型 HTML 不应覆写）：
+
+| 维度 | 值 | 说明 |
+|---|---|---|
+| body 背景 | `oklch(0.92 0.005 280)` | macOS 桌面浅灰，让白色窗口悬浮其上 |
+| body padding | `32px 24px` | 整体外边距 |
+| macos-window 尺寸 | **1460×910** | 对齐 PC macOS 应用常见窗口大小（参 `references/shadcn-tweakcn-theme.md`） |
+| toc-sidebar 宽度 | **280px** | sticky top:32px，独立卡片样式 |
+| prd-panel 宽度 | **360px** | sticky top:32px，与 macos-window 同高（910px） |
+| 列间距 | `24px` | toc / 原型 / prd 三者之间 |
 
 约束：
 

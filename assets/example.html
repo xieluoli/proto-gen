@@ -10,24 +10,21 @@
 </head>
 <body>
 
-<!-- 顶部导航栏（原型自身的浏览栏） -->
-<nav class="proto-nav">
-  <a href="#" class="proto-back"><i data-lucide="arrow-left"></i>proto-gen 示例</a>
-  <span class="proto-title">macOS 窗口布局 + 旁注 PRD 面板</span>
-</nav>
+<!-- 三栏布局：左 TOC + 中原型纵列 + 右 PRD（PRD 在每个 proto-with-prd 内） -->
+<div class="proto-layout">
 
-<!-- 左侧页面索引（toc） -->
-<nav class="toc-sidebar">
-  <div class="toc-title">页面导航</div>
-  <a class="toc-item" href="#section-home"><span class="toc-dot"></span>Home-01</a>
-  <a class="toc-item" href="#section-modal"><span class="toc-dot"></span>Home-02</a>
-</nav>
+  <!-- 左侧页面索引（toc）：sticky 卡片 -->
+  <nav class="toc-sidebar">
+    <div class="toc-title">页面导航</div>
+    <a class="toc-item" href="#section-home"><span class="toc-dot"></span>Home-01</a>
+    <a class="toc-item" href="#section-modal"><span class="toc-dot"></span>Home-02</a>
+  </nav>
 
-<!-- 主内容区 -->
-<div class="page-stack" style="padding-top:40px;">
+  <!-- 原型纵列：每个 section 一个 proto-stack（section-label + proto-with-prd） -->
+  <div class="sections-col">
 
 <!-- Section 1：主页（左侧边栏 + 顶部工具栏 + 内容区 三件套） -->
-<div id="section-home">
+<div id="section-home" class="proto-stack">
   <div class="section-label">Home-01</div>
   <div class="proto-with-prd">
 
@@ -169,7 +166,7 @@
 </div>
 
 <!-- Section 2：弹窗叠加态 -->
-<div id="section-modal">
+<div id="section-modal" class="proto-stack">
   <div class="section-label">Home-02</div>
   <div class="proto-with-prd">
 
@@ -285,7 +282,8 @@
   </div>
 </div>
 
-</div><!-- end page-stack -->
+  </div><!-- end .sections-col -->
+</div><!-- end .proto-layout -->
 
 <script>
   if (window.lucide) lucide.createIcons();

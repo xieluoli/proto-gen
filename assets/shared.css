@@ -15,8 +15,12 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: var(--font-sans); font-size: 13px; color: var(--foreground);
-  background: var(--background); line-height: 1.5; -webkit-font-smoothing: antialiased;
-  padding: 48px 24px 80px;
+  background: oklch(0.92 0.005 280);                  /* macOS 桌面浅灰，原型悬浮其上 */
+  line-height: 1.5; -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex; justify-content: center; align-items: flex-start;
+  padding: 32px 24px;
+  box-sizing: border-box;
 }
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 3px; }
@@ -24,17 +28,43 @@ body {
 .page-header { text-align: center; margin-bottom: 40px; }
 .page-header h1 { font-family: var(--font-sans); font-size: 32px; font-weight: 700; color: var(--foreground); letter-spacing: -0.03em; }
 .page-header p { font-size: 14px; color: var(--text-2); margin-top: 4px; }
-.page-stack { display: flex; flex-direction: column; align-items: center; gap: 48px; }
-.section-label { font-family: var(--font-sans); font-size: 18px; font-weight: 600; color: var(--text-2); letter-spacing: -0.02em; margin-bottom: 12px; text-align: center; }
+.page-stack { display: flex; flex-direction: column; align-items: center; gap: 48px; }   /* 旧布局：纯纵向堆叠，无 TOC */
+.section-label { font-family: var(--font-sans); font-size: 13px; font-weight: 500; color: color-mix(in oklch, var(--foreground) 75%, transparent); letter-spacing: 0.01em; padding: 0 4px; }
 
-/* macOS window */
-.macos-window { width: 1080px; max-width: 100%; background: var(--background); border-radius: var(--radius-card); overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04); }
-.macos-titlebar { background: var(--muted); height: 36px; display: flex; align-items: center; padding: 0 14px; gap: 10px; border-bottom: 1px solid var(--border); }
+/* 三栏布局骨架：TOC | 原型纵列 | 每个原型内右侧 PRD */
+.proto-layout {
+  display: flex; flex-direction: row;
+  align-items: flex-start; gap: 24px;
+  max-width: 100%;
+}
+.sections-col {
+  display: flex; flex-direction: column;
+  gap: 48px; min-width: 0;
+}
+.proto-stack {
+  display: flex; flex-direction: column;
+  gap: 12px; flex-shrink: 0;
+}
+
+/* macOS window：默认 1460×910（对齐 724AIManager 等 PC 应用规范，参 references/shadcn-tweakcn-theme.md） */
+.macos-window {
+  width: 1460px; max-width: 100%;
+  height: 910px;
+  background: var(--background);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  box-shadow:
+    0 24px 60px rgba(0,0,0,0.15),
+    0 8px 20px rgba(0,0,0,0.10),
+    0 0 0 1px rgba(0,0,0,0.06);
+}
+.macos-titlebar { background: var(--muted); height: 36px; flex-shrink: 0; display: flex; align-items: center; padding: 0 14px; gap: 10px; border-bottom: 1px solid var(--border); }
 .macos-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
 /* traffic light：平台装饰，保留固定色 */
 .macos-dot.red { background: #ff5f57; } .macos-dot.yellow { background: #febc2e; } .macos-dot.green { background: #28c840; }
 .macos-title { flex: 1; text-align: center; font-size: 12px; font-weight: 500; color: var(--text-2); margin-right: 40px; }
-.macos-body { display: grid; grid-template-columns: 212px 1fr; grid-template-rows: 36px auto; min-height: 500px; position: relative; }
+.macos-body { flex: 1; min-height: 0; display: grid; grid-template-columns: 212px 1fr; grid-template-rows: 36px 1fr; position: relative; }
 
 /* Sidebar */
 .app-sidebar {
@@ -65,7 +95,7 @@ body {
 .sidebar-apps { flex: 1; overflow-y: auto; min-height: 0; }
 
 /* Main content */
-.app-main { flex: 1; padding: 24px 28px; overflow-y: auto; max-height: 540px; grid-column: 2; grid-row: 2; }
+.app-main { flex: 1; padding: 24px 28px; overflow-y: auto; grid-column: 2; grid-row: 2; min-height: 0; }
 
 /* Buttons */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-family: var(--font-sans); font-size: 12px; font-weight: 500; border-radius: var(--radius-btn); cursor: pointer; transition: all 0.15s; border: none; white-space: nowrap; }
@@ -521,31 +551,37 @@ img.hero-icon { border-radius: 6px; object-fit: contain; }
   pointer-events: none;
 }
 
-/* TOC 目录导航 */
+/* TOC 目录导航：sticky 卡片，跟随滚动；360px 宽参 ai-store 规范 */
 .toc-sidebar {
-  position: fixed; left: 24px; top: 120px; transform: none;
-  width: 180px; max-height: calc(100vh - 160px); overflow-y: auto;
-  z-index: 100; padding-right: 8px;
+  position: sticky; top: 32px;
+  width: 280px; flex-shrink: 0;
+  background: var(--background);
+  border-radius: var(--radius-card);
+  padding: 20px 16px;
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.06),
+    0 0 0 1px rgba(0,0,0,0.04);
+  max-height: calc(100vh - 64px); overflow-y: auto;
 }
 .toc-sidebar .toc-title {
-  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
-  color: var(--text-3); letter-spacing: 0.06em; text-transform: uppercase;
-  margin-bottom: 8px; padding-left: 8px;
+  font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: color-mix(in oklch, var(--muted-foreground) 60%, transparent);
+  margin-bottom: 14px; padding-left: 4px;
 }
 .toc-item {
-  display: flex; align-items: center; gap: 6px;
-  padding: 5px 8px; border-radius: 4px; cursor: pointer;
-  font-size: 11px; color: var(--text-2); text-decoration: none;
-  transition: all 0.15s; border-left: 2px solid transparent;
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: var(--radius-btn);
+  font-size: 13px; color: var(--foreground); text-decoration: none;
+  transition: background 0.15s, color 0.15s;
 }
-.toc-item:hover { background: var(--muted); color: var(--foreground); }
+.toc-item:hover { background: color-mix(in oklch, var(--muted) 60%, transparent); }
 .toc-item.active {
-  color: var(--primary); font-weight: 500;
-  background: var(--primary-light); border-left-color: var(--primary);
-  border-radius: 0;
+  background: var(--accent); color: var(--accent-foreground);
+  font-weight: 500;
 }
-.toc-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--border-2); flex-shrink: 0; transition: background 0.15s; }
-.toc-item.active .toc-dot { background: var(--primary); }
+.toc-dot { width: 6px; height: 6px; border-radius: 50%; background: color-mix(in oklch, var(--primary) 55%, transparent); flex-shrink: 0; transition: background 0.15s; }
+.toc-item.active .toc-dot { background: var(--accent-foreground); }
 .toc-mirror-tag {
   font-size: 9px; padding: 1px 5px; border-radius: 3px;
   background: var(--muted); color: var(--text-3); flex-shrink: 0;
@@ -705,25 +741,29 @@ img.hero-icon { border-radius: 6px; object-fit: contain; }
 .proto-back i { width: 14px; height: 14px; stroke-width: 1.75; }
 .proto-title { font-size: 12px; color: var(--text-3); font-family: var(--font-sans); }
 
-/* 原型旁注 PRD 面板 */
+/* 原型旁注 PRD 面板：宽 360 sticky 顶；与 macos-window (910) 同高，超长内容内部滚动 */
 .proto-with-prd {
-  display: flex; gap: 20px;
+  display: flex; flex-direction: row;
+  gap: 24px;
   align-items: flex-start;
-  justify-content: center;
 }
 .proto-with-prd .macos-window { flex-shrink: 0; }
 .prd-panel-wrap {
   width: 360px; flex-shrink: 0;
-  position: relative;
-  align-self: stretch;
+  position: sticky; top: 32px;
+  height: 910px;
+  max-height: calc(100vh - 64px);
+  /* 与 proto-stack 内 .section-label (≈22px) + gap (12px) 错位顶部对齐 macos-window */
+  margin-top: calc(13px * 1.5 + 12px);
 }
 .prd-panel {
   position: absolute; inset: 0;
   display: flex; flex-direction: column;
   background: var(--background);
-  border: 1px solid var(--border);
   border-radius: var(--radius-card);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.06),
+    0 0 0 1px rgba(0,0,0,0.04);
   overflow: hidden;
 }
 .prd-panel__title {
