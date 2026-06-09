@@ -753,8 +753,7 @@ img.hero-icon { border-radius: 6px; object-fit: contain; }
   position: sticky; top: 32px;
   height: 910px;
   max-height: calc(100vh - 64px);
-  /* 与 proto-stack 内 .section-label (≈22px) + gap (12px) 错位顶部对齐 macos-window */
-  margin-top: calc(13px * 1.5 + 12px);
+  /* section-label 在 proto-with-prd 之外（proto-stack 直接子节点），PRD 与 macos-window 自然顶部对齐，无需 margin-top 下移 */
 }
 .prd-panel {
   position: absolute; inset: 0;
