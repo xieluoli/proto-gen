@@ -1,493 +1,100 @@
-# CSS 组件速查
-
-> **适用范围**：PC · macOS 系列。Mobile 系列后续以独立文件扩展（如 `css-components-mobile.md`），不混入本文件。
-
-所有类来自 `shared.css`，按功能分组。不要自造未在此列出的类名。
-
-## 设计 Token（CSS 变量）
-
-```
-颜色
---primary: #6366F1      主色（indigo）
---primary-hover         hover 态
---primary-light         主色浅色背景 rgba(99,102,241,0.08)
---success: #10B981      成功绿
---warning: #F59E0B      警告黄
---error: #EF4444        错误红
---bg: #FAFAFA           页面背景
---surface: #FFFFFF      卡片/面板背景
---text: #0A0A0A         主文字
---text-2: #6B6B6B       次级文字
---text-3: #9C9C9C       三级文字（占位符、弱提示）
---border: #E8E8EC       普通描边
---border-2: #D4D4D8     强调描边
-
-字体
---font-display: 'General Sans'   标题/数字
---font-body: 'DM Sans'           正文
---font-mono: 'JetBrains Mono'    代码/版本号/路径
-
-圆角
---radius-chip: 4px    badge
---radius-btn: 6px     按钮/输入框
---radius-panel: 8px   小面板
---radius-card: 12px   卡片
---radius-full: 9999px 胶囊
-```
-
----
-
-## 布局
-
-| 类 | 用途 |
-|---|---|
-| `.page-stack` | 垂直堆叠所有 section，`gap:48px`，居中 |
-| `.section-label` | section 编号标签（如「Home-01」） |
-| `.macos-window` | 1080px 宽 macOS 窗口容器 |
-| `.macos-body` | 窗口主体，grid: 212px sidebar + 1fr |
-| `.app-sidebar` | 左侧导航栏 212px |
-| `.win-chrome-bar` | 顶栏（grid-row:1，grid-col:2） |
-| `.app-main` | 主内容区（grid-row:2，grid-col:2），`padding:24px 28px;max-height:540px;overflow-y:auto` |
-| `.proto-with-prd` | 原型+PRD 并排 flex 容器 |
-| `.prd-panel-wrap` | PRD 面板占位（width:360px） |
-| `.prd-panel` | PRD 面板（绝对定位，随 macos-window 高度） |
-| `.grid-2/3/4` | 2/3/4 列等宽网格，gap:10px |
-
----
-
-## 侧边栏组件
-
-| 类 | 用途 |
-|---|---|
-| `.sidebar-section-header` | 分组标题（全大写，灰色） |
-| `.sidebar-item` | 导航项，含 icon + 文字 |
-| `.sidebar-item.active` | 当前页高亮（主色背景 + 主色文字） |
-| `.sidebar-divider` | 水平分隔线 |
-| `.sidebar-apps` | 我的应用列表（可滚动） |
-| `.sidebar-item .si-badge` | 导航项右侧小 badge（如警告计数） |
-| `.nav-icon` | 导航图标（16×16，flex-shrink:0） |
-
----
-
-## 按钮
-
-```html
-<!-- 主色实心 -->
-<button class="btn btn-primary">文字</button>
-<button class="btn btn-primary btn-lg">大按钮</button>
-<button class="btn btn-primary btn-sm">小按钮</button>
-
-<!-- 次级（边框） -->
-<button class="btn btn-secondary">文字</button>
-
-<!-- 幽灵（透明底） -->
-<button class="btn btn-ghost">文字</button>
-<button class="btn btn-ghost btn-sm">小幽灵</button>
-
-<!-- 危险（红色边框） -->
-<button class="btn btn-danger">卸载</button>
-
-<!-- 禁用态 -->
-<button class="btn btn-ghost btn-sm" disabled style="color:var(--text-3);">已安装</button>
-```
-
-### 非对称 form-actions（左 danger / 右 cancel-save）
-
-编辑型表单底部，左侧放危险操作（删除），右侧放主流程按钮（取消 + 保存）。
-
-```html
-<div class="form-actions" style="justify-content:space-between;">
-  <button class="btn btn-danger btn-sm">删除</button>
-  <div style="display:flex;gap:8px;">
-    <button class="btn btn-ghost btn-sm">取消</button>
-    <button class="btn btn-primary btn-sm">保存</button>
-  </div>
-</div>
-```
-
-要点：
-
-- 默认 `.form-actions` 是右对齐 flex；用 inline `justify-content:space-between` 切换为两端对齐
-- 创建场景下不渲染左侧 danger 按钮，回到默认右对齐
-- 建议未来在 shared.css 抽 `.form-actions--split` 修饰符替代 inline style
-
----
-
-## 输入控件
-
-```html
-<!-- 普通输入框 -->
-<input class="input" placeholder="..." />
-<input class="input input-mono" placeholder="sk-..." />  <!-- 等宽字体 -->
-
-<!-- 表单输入框（在 form-group 中） -->
-<div class="form-group">
-  <label class="form-label">字段名</label>
-  <input class="form-input" placeholder="..." />
-</div>
-
-<!-- 密码框（带眼睛图标） -->
-<div class="form-group">
-  <label class="form-label">API Key</label>
-  <div class="form-input-wrap">
-    <input class="form-input" type="password" placeholder="sk-..." />
-    <button class="form-eye">
-      <i data-lucide="eye" class="eye-on" style="width:14px;height:14px;"></i>
-      <i data-lucide="eye-off" class="eye-off" style="width:14px;height:14px;"></i>
-    </button>
-  </div>
-</div>
-
-<!-- 多行文本 -->
-<textarea class="form-textarea" rows="4" placeholder="..."></textarea>
-
-<!-- Combobox（带下拉）-->
-<div class="form-combobox">
-  <input class="form-input" placeholder="选择..." />
-  <button class="form-chevron"><i data-lucide="chevron-down" style="width:14px;height:14px;"></i></button>
-  <div class="combobox-menu">
-    <div class="combobox-option" data-value="x">
-      <img src="...icon..." />选项名
-    </div>
-  </div>
-</div>
-```
-
-### 表单小尺寸变体（用于嵌套场景）
-
-当表单字段嵌套在 tab pane / 卡片内部时，用 `--sm` 修饰符紧凑展示；`.form-row-2` 用于并排两个字段。
-
-```html
-<div class="form-row-2">
-  <div>
-    <label class="form-label form-label--sm">字段 1</label>
-    <input class="form-input form-input--sm" placeholder="..." />
-  </div>
-  <div>
-    <label class="form-label form-label--sm">字段 2</label>
-    <input class="form-input form-input--sm" placeholder="..." />
-  </div>
-</div>
-
-<!-- 字段下方的灰色解释文 -->
-<div class="form-tip">这是一句对上方字段的辅助说明，灰色小字。</div>
-```
-
-适用场景：tab pane 内的字段集、设置类卡片内的多字段、需要并列展示的成对字段（如「默认 / Opus / Sonnet / Haiku」4 字段 2×2 网格）。
-
-### 只读字段（系统下发 / 不可编辑场景）
-
-```html
-<div class="form-group">
-  <label class="form-label">字段名</label>
-  <input class="form-input" value="系统下发的值" readonly>
-  <div class="form-tip">默认值由账号绑定，前端只读。</div>
-</div>
-
-<!-- 密码类只读字段：保留眼睛图标切换明文/密文，但 input 不可编辑 -->
-<div class="form-group">
-  <label class="form-label">API Key</label>
-  <div class="form-input-wrap">
-    <input class="form-input" type="password" value="sk-****c9e2" readonly>
-    <button class="form-eye"><i data-lucide="eye"></i></button>
-  </div>
-</div>
-```
-
-要点：
-
-- 用原生 `readonly` 属性 + `.form-tip` 解释为什么只读，**不要**用 `disabled`（会丢失键盘选中能力，妨碍用户查看内容）
-- combobox 在只读时不渲染 `.form-chevron`（用户无下拉选择权）
-- 建议未来在 shared.css 抽一个 `.form-input--readonly` 修饰符代替对 `readonly` 属性的样式选择器，便于显式控制视觉
-
----
-
-## 卡片
-
-```html
-<!-- 基础信息卡 -->
-<div class="info-card">
-  <div class="info-row">
-    <span class="info-label">字段名</span>
-    <span class="info-value">值</span>
-  </div>
-</div>
-
-<!-- 渠道卡片 -->
-<div class="channel-card">
-  <!-- 内容 -->
-  <div class="channel-actions">
-    <button class="channel-action-btn"><i data-lucide="pencil"></i><span class="ca-tip">编辑</span></button>
-    <button class="channel-action-btn danger"><i data-lucide="trash-2"></i><span class="ca-tip">删除</span></button>
-  </div>
-</div>
-<div class="channel-card default"><!-- 默认渠道左侧有主色边框 --></div>
-```
-
-### 卡片悬浮操作条（hover-revealed action toolbar）
-
-在卡片右上角浮出一组纯图标按钮，hover 时显示，每个按钮带 tooltip。适用于「列表 + 多卡片」场景的快捷操作。
-
-```html
-<div class="channel-card">
-  <div class="channel-actions">
-    <button class="channel-action-btn">
-      <i data-lucide="pencil" style="width:13px;height:13px;"></i>
-      <span class="ca-tip">编辑</span>
-    </button>
-    <!-- 禁用变体：灰色 + not-allowed 光标 + 自定义解释 tooltip -->
-    <button class="channel-action-btn danger is-disabled" disabled>
-      <i data-lucide="trash-2" style="width:13px;height:13px;"></i>
-      <span class="ca-tip">默认渠道不可删除</span>
-    </button>
-  </div>
-  <!-- 卡片正文 -->
-</div>
-```
-
-要点：
-
-- `.channel-actions` 绝对定位在卡片右上角，默认隐藏，父卡片 hover 时显示
-- `.channel-action-btn.danger` 危险动作（红色），与普通动作的中性灰区分
-- `.is-disabled` 修饰符：渲染禁用态（灰色 + `not-allowed` 光标 + 透明 hover 背景），点击无响应；`.ca-tip` 文案用于解释禁用原因，避免歧义
-- 演示态可加 `.show-actions` 修饰符强制操作条可见（用于截图/原型审查）
-
-### 空状态占位卡片（empty-state placeholder card）
-
-列表/库为空时的兜底卡片，主 CTA 下沉到卡内：虚线边框 + 透明背景 + 居中加号徽块 + 主标题 + 副标题，整卡可点击。适用「空库 → 引导添加首条数据」类场景。
-
-```html
-<div class="empty-card" onclick="...打开添加子页...">
-  <div class="empty-card__icon"><i data-lucide="plus" style="width:18px;height:18px;"></i></div>
-  <div class="empty-card__title">点击添加{对象名}</div>
-  <div class="empty-card__desc">{一句话引导，说明配置完后能做什么}</div>
-</div>
-```
-
-要点：
-
-- 与 `.channel-card`（实心已填充态）形成**视觉对比**——虚线 vs 实线、透明 vs 白底
-- hover 时主色边框 + 浅主色背景（`--primary-light`），强化可点击性
-- 顶部不需要再放「+ 添加」按钮——避免双 CTA 噪音；主 CTA 已下沉到占位卡内
-- 副标题用 `--text-3` 弱化，主标题用 `--text` 加粗
-- 适用「空渠道库 / 空 Agent 库 / 空 Skill 库 / 空收件箱」等所有需要引导首条数据的场景
-
----
-
-## Badge
-
-```html
-<span class="badge">默认灰</span>
-<span class="badge badge-success">健康 / 已安装 / 已完成</span>
-<span class="badge badge-warn">警告 / 待处理</span>
-<span class="badge badge-error">缺失 / 异常 / 错误</span>
-<span class="badge badge-info">提示 / 信息 / 默认</span>
-```
-
----
-
-## Tabs
-
-```html
-<div class="inline-tabs">
-  <button class="inline-tab active">全部</button>
-  <button class="inline-tab">推荐</button>
-  <button class="inline-tab">CLI 工具</button>
-</div>
-```
-
-### 品牌 tabs（branded tabs + per-pane form）
-
-横向 tab，每个 tab 带品牌 logo（或首字母兜底）+ 可选版本 badge。点击切换下方 `.agent-pane`。适用于「按对象/品牌切换配置面板」。
-
-```html
-<div class="agent-tabs">
-  <button type="button" class="agent-tab agent-tab--active" data-agent="claude-code">
-    <img src="https://unpkg.com/@lobehub/icons-static-svg@latest/icons/claude-color.svg" alt="">
-    <span>Claude Code</span>
-  </button>
-  <button type="button" class="agent-tab" data-agent="codex">
-    <img src="https://unpkg.com/@lobehub/icons-static-svg@latest/icons/openai.svg" alt="">
-    <span>Codex</span>
-    <span class="agent-tab__badge">v0.0.4+</span>
-  </button>
-  <!-- 无 logo 品牌走兜底块 -->
-  <button type="button" class="agent-tab" data-agent="custom">
-    <span class="agent-tab__fallback" style="background:linear-gradient(135deg,var(--primary),#818cf8);">C</span>
-    <span>Custom</span>
-  </button>
-</div>
-
-<!-- 每个 tab 对应一个 pane -->
-<div class="agent-pane" data-agent="claude-code">
-  <!-- pane 1 字段 -->
-</div>
-<div class="agent-pane" data-agent="codex" style="display:none;">
-  <!-- pane 2 字段 -->
-</div>
-```
-
-配套切换 JS（约 11 行）：
-
-```js
-document.querySelectorAll('.agent-tabs').forEach(function(bar){
-  bar.querySelectorAll('.agent-tab').forEach(function(tab){
-    tab.addEventListener('click', function(){
-      bar.querySelectorAll('.agent-tab').forEach(function(t){ t.classList.remove('agent-tab--active'); });
-      tab.classList.add('agent-tab--active');
-      var formGroup = bar.closest('.form-group');
-      var panes = formGroup ? formGroup.querySelectorAll('.agent-pane[data-agent]') : [];
-      if (panes.length > 1) {
-        var target = tab.dataset.agent;
-        panes.forEach(function(p){ p.style.display = (p.dataset.agent === target) ? '' : 'none'; });
-      }
-    });
-  });
-});
-```
-
-与 `.inline-tabs` 的区别：
-
-- `.inline-tabs` 纯文字 tab，用于「筛选/分类切换」（如全部 / 推荐 / CLI 工具）
-- `.agent-tabs` 带 logo + badge，用于「按对象切换配置面板」（如不同 Agent 的字段映射）
-
----
-
-## 弹窗 / 对话框
-
-```html
-<!-- form-dialog（用于弹窗内容容器） -->
-<div class="form-dialog">
-  <button class="modal-close-x"><i data-lucide="x"></i></button>
-  <div class="form-dialog-title">弹窗标题</div>
-  <!-- form-group 字段 -->
-  <div class="form-actions">
-    <button class="btn btn-ghost">取消</button>
-    <button class="btn btn-primary">确认</button>
-  </div>
-</div>
-```
-
-### 卡片锚点 popover（anchored popover）
-
-锚定到卡片底部展开的多选 + 确认浮层，比 modal 轻量。适合「针对当前卡片做一个小决定」的场景。
-
-```html
-<div class="channel-card show-actions">
-  <!-- 卡片正文 -->
-  <div class="apply-popover">
-    <div class="ap-title">应用到 Agent</div>
-    <label class="ap-item"><input type="checkbox" checked><span>Claude Code</span></label>
-    <label class="ap-item"><input type="checkbox"><span>Cursor</span></label>
-    <div class="ap-footer">
-      <button class="btn btn-ghost btn-sm">取消</button>
-      <button class="btn btn-primary btn-sm">确认应用</button>
-    </div>
-  </div>
-</div>
-```
-
-要点：
-
-- popover 是卡片的子节点，**不脱离卡片**，跟随卡片定位
-- 与 modal 区别：不全局遮罩、不阻塞页面其他操作；仅在当前卡片上下文内有效
-- 适用「多选 + 一次提交」类的快捷决定，超过 3 个字段建议改 subpage
-
-### destructive confirm dialog 视觉食谱
-
-不是新类，是**固定的视觉配方**，用现有 `.form-dialog` + 内部排版实现。所有"不可撤销的删除/重置"操作都应套用此食谱保持一致。
-
-```html
-<div class="form-dialog" style="width:360px;">
-  <button class="modal-close-x"><i data-lucide="x"></i></button>
-
-  <!-- 头部：32px 圆形浅红底 + alert-triangle 红色 16px -->
-  <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;">
-    <div style="width:32px;height:32px;border-radius:50%;background:#fee2e2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-      <i data-lucide="alert-triangle" style="width:16px;height:16px;color:#dc2626;"></i>
-    </div>
-    <div>
-      <div class="form-dialog-title" style="margin-bottom:6px;">删除 {对象名}？</div>
-      <div style="font-size:12px;color:var(--text-2);line-height:1.6;">
-        即将删除 <strong style="color:var(--text);">{对象名}</strong>。{副作用说明}。
-      </div>
-    </div>
-  </div>
-
-  <!-- 浅红横条：不可撤销提醒 -->
-  <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:10px 12px;margin-bottom:18px;">
-    <div style="font-size:11px;color:#991b1b;line-height:1.6;display:flex;align-items:flex-start;gap:6px;">
-      <i data-lucide="info" style="width:12px;height:12px;margin-top:2px;flex-shrink:0;"></i>
-      <span>此操作不可撤销。{将被清除的具体内容}。</span>
-    </div>
-  </div>
-
-  <!-- 底部按钮：右下对齐，确认按钮危险色实心 -->
-  <div class="form-actions">
-    <button class="btn btn-ghost btn-sm">取消</button>
-    <button class="btn btn-sm" style="background:#dc2626;color:#fff;padding:5px 14px;">确认删除</button>
-  </div>
-</div>
-```
-
-色板（不在 token 中，inline 使用即可，保持配方稳定）：
-
-| 用途 | 色值 |
-|---|---|
-| 头部圆形背景 | `#fee2e2` |
-| 警告图标 | `#dc2626` |
-| 横条背景 | `#fef2f2` |
-| 横条描边 | `#fecaca` |
-| 横条文字 | `#991b1b` |
-| 确认按钮背景 | `#dc2626` |
-
-适用场景：删除渠道 / 删除应用 / 重置配置 / 清空数据 等不可撤销操作。简单的二次确认（如「确定退出？」）不需要走此食谱，直接用 `.form-dialog` 基础结构即可。
-
----
-
-## Toggle 开关
-
-```html
-<label class="toggle-switch">
-  <input type="checkbox" checked />
-  <span class="toggle-slider"></span>
-</label>
-```
-
----
-
-## 进度条
-
-```html
-<div class="progress-bar">
-  <div class="progress-fill indigo" style="width:67%;"></div>  <!-- 主色 -->
-  <div class="progress-fill amber" style="width:40%;"></div>   <!-- 黄色 -->
-</div>
-```
-
----
-
-## 动效类
-
-| 类 | 效果 |
-|---|---|
-| `.pulse-dot` | 绿色脉冲圆点（运行状态） |
-| `.spin` | 旋转动画（loading spinner） |
-| `@keyframes breathe` | 骨架屏呼吸动画 |
-
-骨架屏占位块（体检加载态）：
-```html
-<div style="height:16px;background:#f0f0f3;border-radius:4px;animation:breathe 1.5s ease-in-out infinite;"></div>
-```
-
----
-
-## 工具类（常用 inline style）
+# CSS 组件索引
+
+> 视觉规范（颜色 / 字号 / 圆角）由 `assets/theme.css` 注入，可视样例见 `assets/components.html`（通用组件库）。
+> 本文档只做**类名 → 用途 → 可视锚点**的索引。
+>
+> AI 生成原型 / 写 PRD 时：通过本表选用类名，直接说「展示主按钮，应用 `.btn-primary` 风格」，不要在 PRD 文档中复述颜色 hex / 圆角 px 等具体值。
+
+适用范围：PC · macOS 系列。Mobile 系列后续以独立文件扩展（如 `css-components-mobile.md`），不混入本文件。
+
+## 通用组件原语（在 `components.html` 展示）
+
+| 组件名 | 主类名 | 可视锚点 | 何时用 |
+|---|---|---|---|
+| **按钮** |  |  |  |
+| 主按钮 | `.btn .btn-primary` | [`#comp-btn-primary`](../assets/components.html#comp-btn-primary) | 主行动 CTA、表单提交、对话框确认 |
+| 次按钮 | `.btn .btn-secondary` | [`#comp-btn-secondary`](../assets/components.html#comp-btn-secondary) | 取消、副行动、并列主按钮的次选择 |
+| 幽灵按钮 | `.btn .btn-ghost` | [`#comp-btn-ghost`](../assets/components.html#comp-btn-ghost) | 透明底，弱化次级动作（工具栏、卡片内联） |
+| 危险按钮 | `.btn .btn-danger` | [`#comp-btn-danger`](../assets/components.html#comp-btn-danger) | 破坏性操作：删除、卸载、清空、重置 |
+| 尺寸变体 | `.btn-sm` / `.btn-lg` | [`#comp-btn-sizes`](../assets/components.html#comp-btn-sizes) | 紧凑场景 sm，强调主行动 lg |
+| **输入** |  |  |  |
+| 输入框 | `.input` | [`#comp-input`](../assets/components.html#comp-input) | 通用单行文本 |
+| 等宽输入框 | `.input.input-mono` | [`#comp-input-mono`](../assets/components.html#comp-input-mono) | API Key / 路径 / 命令等 mono 内容 |
+| 多行文本 | `.form-textarea` | [`#comp-textarea`](../assets/components.html#comp-textarea) | 多行输入；可垂直拖拽 |
+| 下拉选择 | `.form-combobox` | [`#comp-combobox`](../assets/components.html#comp-combobox) | 带 chevron 的下拉 |
+| 密码输入 | `.form-input-wrap` + `.form-eye` | [`#comp-password`](../assets/components.html#comp-password) | 密码切换明文 / 密文 |
+| **表单** |  |  |  |
+| 表单字段 | `.form-group` + `.form-label` + `.form-input` | [`#comp-form-group`](../assets/components.html#comp-form-group) | 标签 + 输入 + 可选说明 |
+| 小尺寸表单 | `.form-input--sm` / `.form-label--sm` | [`#comp-form-group`](../assets/components.html#comp-form-group) | 嵌套场景紧凑展示 |
+| 字段说明 | `.form-tip` | [`#comp-form-group`](../assets/components.html#comp-form-group) | 字段下方灰色辅助说明 |
+| 两列并排 | `.form-row-2` | [`#comp-form-group`](../assets/components.html#comp-form-group) | 两个字段水平并排 |
+| 表单按钮区 | `.form-actions` | [`#comp-form-actions`](../assets/components.html#comp-form-actions) | 表单底部按钮区；默认右对齐 |
+| **卡片** |  |  |  |
+| 信息卡 | `.info-card` + `.info-row` | [`#comp-info-card`](../assets/components.html#comp-info-card) | 通用信息容器 + 字段名/值列 |
+| 空状态卡片 | `.empty-card` | [`#comp-empty-card`](../assets/components.html#comp-empty-card) | 空列表 / 空库引导添加首条数据 |
+| **Badge** |  |  |  |
+| 徽标 | `.badge .badge-{tone}` | [`#comp-badge`](../assets/components.html#comp-badge) | `default / success / warn / error / info` 5 套；font-weight 600 |
+| 含图标徽标 | `.badge` + lucide icon | [`#comp-badge-icon`](../assets/components.html#comp-badge-icon) | badge 内含 10×10 icon |
+| **Tabs** |  |  |  |
+| 行内 Tab | `.inline-tabs` + `.inline-tab` | [`#comp-inline-tabs`](../assets/components.html#comp-inline-tabs) | 纯文字 tab，筛选 / 分类切换 |
+| **弹窗** |  |  |  |
+| 表单对话框 | `.form-dialog` + `.modal-close-x` + `.form-actions` | [`#comp-form-dialog`](../assets/components.html#comp-form-dialog) | 常规弹窗容器 |
+| 危险确认 | `.form-dialog`（食谱） | [`#comp-destructive-confirm`](../assets/components.html#comp-destructive-confirm) | 不可撤销操作；红色警告头 + 横条 + 红色实心 |
+| **侧栏** |  |  |  |
+| 导航项 | `.sidebar-item` / `.sidebar-item.active` | [`#comp-sidebar`](../assets/components.html#comp-sidebar) | 主导航；active 用 sidebar-accent 背景 |
+| 分组标题 | `.sidebar-section-header` | [`#comp-sidebar`](../assets/components.html#comp-sidebar) | 全大写 + tracking + 灰色 |
+| 分隔线 | `.sidebar-divider` | [`#comp-sidebar`](../assets/components.html#comp-sidebar) | 水平 1px |
+| 子 badge | `.sidebar-item .si-badge` | [`#comp-sidebar`](../assets/components.html#comp-sidebar) | 导航项右侧小 badge |
+| 导航 icon | `.nav-icon` | — | 16×16 + stroke-width 1.75 |
+| **Toggle** |  |  |  |
+| 开关 | `.toggle-switch` + `.toggle-slider` | [`#comp-toggle`](../assets/components.html#comp-toggle) | 二态；切换即生效；禁用用 `.is-disabled` |
+| **进度 / 动效** |  |  |  |
+| 进度条 | `.progress-bar` + `.progress-fill .indigo` / `.amber` | [`#comp-progress-bar`](../assets/components.html#comp-progress-bar) | 线性进度 |
+| 脉冲点 | `.pulse-dot` | [`#comp-loading`](../assets/components.html#comp-loading) | 运行中状态 |
+| Spinner | `.spin` | [`#comp-loading`](../assets/components.html#comp-loading) | 配合 `data-lucide="loader-2"` |
+| 骨架屏 | `@keyframes breathe` 工具类 | [`#comp-loading`](../assets/components.html#comp-loading) | 加载占位呼吸动画 |
+| **PRD 旁注**（proto-gen 专属） |  |  |  |
+| 面板容器 | `.prd-panel` + `.prd-panel-wrap` | [`#comp-prd-panel`](../assets/components.html#comp-prd-panel) | 原型右侧旁注 |
+| 面板标题 | `.prd-panel__title` | [`#comp-prd-panel`](../assets/components.html#comp-prd-panel) | 「功能概览」标题 |
+| 面板正文 | `.prd-panel__body` | [`#comp-prd-panel`](../assets/components.html#comp-prd-panel) | 滚动容器 |
+| 分组 | `.prd-section` + `.prd-section__title` | [`#comp-prd-panel`](../assets/components.html#comp-prd-panel) | 一段功能描述 |
+
+## 业务衍生类（**不**在 `components.html` 展示）
+
+下面这些类是某些业务原型沉淀下来的高频模式，**继续可用**，但不属于通用组件原语；新原型如能用通用原语解决，**不要**走这些业务衍生。如果你的需求确实匹配这类业务场景，直接用即可。
+
+| 业务衍生类 | 用途 | 适用场景示例 |
+|---|---|---|
+| `.channel-card` / `.channel-card.default` / `.channel-actions` / `.channel-action-btn` | 列表项卡片，hover 浮出操作条；`.default` 左侧主色边标识默认项 | 模型渠道列表 / Agent 实例列表 / 多账户切换 |
+| `.channel-action-btn.danger` / `.channel-action-btn.is-disabled` + `.ca-tip` | 卡片操作条按钮的危险变体 + 禁用变体（带 tooltip 解释） | 删除按钮 / 默认项不可删提示 |
+| `.agent-tabs` / `.agent-tab` / `.agent-tab--active` / `.agent-tab__badge` / `.agent-tab__fallback` | 横向品牌 tab（含 logo + 可选 badge） | 按 Agent 切换配置面板（Claude / Codex / Cursor 等） |
+| `.apply-popover` / `.ap-item` / `.ap-footer` | 锚定卡片底部展开的多选 + 确认浮层 | 「应用到 N 个 Agent」类的快捷决定 |
+| `.badge-free` | 用户身份 / 套餐标识（FREE / PRO） mono 字体 | 用户中心徽标 |
+| `.empty-card` 业务变体 | （通用版已在组件库；业务侧用相同类） | — |
+| `.kpi-cards` / `.kpi-value` / `.kpi-trend` / `.dist-row` / `.dist-bar-wrap` | 用量看板金刚区 4 卡 + 分布行 | Token 用量统计页 |
+| `.agent-filter` / `.export-dropdown` / `.agent-filter-btn` / `.export-btn` | 顶栏 Agent 筛选 + 导出下拉 | 用量看板顶栏 |
+| `.usage-detail-table` 及子选择器 | 用量明细表格 | 调用明细列表 |
+| `.pricing-grid` / `.price-card` / `.price-card.featured` | 套餐价格卡片网格 | 充值 / 升级页 |
+| `.win-chrome-bar` / `.win-chrome-btn` / `.win-credits` / `.win-avatar-chip` | macOS 风格主区顶部操作栏 | 应用顶栏 |
+| `.win-avatar-menu` 及子选择器 | 用户头像下拉菜单 | 顶栏用户区 |
+| `.login-modal` / `.login-overlay` 及子选择器 | 登录弹窗 / 登录浮层 | 登录页 / 未登录拦截 |
+| `.win-login-btn` | 未登录态 chrome bar 上的「登录」按钮 | 顶栏 |
+| `.env-issue-summary` / `.env-issue-badge` / `.env-action-chip` / `.env-source-chip` / `.env-prereq-row` | 环境管理：问题汇总条、问题计数 badge、命令/来源 chip、必要依赖行 | 环境管理页 |
+| `.env-drawer` 及子选择器 | 环境管理：问题详情右侧抽屉 | 环境管理页 |
+| `.toc-sidebar` / `.toc-item` / `.toc-dot` / `.toc-mirror-tag` | 原型自身的 TOC 目录导航（不是产品里的 sidebar） | 多 section 原型 |
+| `.proto-nav` / `.proto-back` / `.proto-title` / `.proto-with-prd` | 原型自身的顶栏 + PRD 旁注容器 | 所有原型外壳 |
+| `.macos-window` / `.macos-titlebar` / `.macos-dot` / `.macos-body` / `.app-sidebar` / `.app-main` | macOS 窗口骨架 + 三段布局 | 所有原型外壳 |
+| `.launch-btn` / `.qr-placeholder` / `.app-topbar` / `.app-avatar` / `.app-breadcrumb` / `.phone-input-wrap` / `.hero-icon` / `.info-icon` / `.store-card` / `.detail-screenshot` / `.detail-section-title` / `.search-shortcut` / `.model-badges` / `.model-toggle` | 散落业务场景的高频小组件 | 商店 / 详情 / 列表等 |
+
+> **判断规则**：写原型时**优先**用通用组件原语；只有当现有原语完全无法组合出目标视觉时，才查上表是否有业务衍生类。**不要**自造新业务衍生类——如出现重复模式 3 次以上再沉淀到 `shared.css` 并在本表登记。
+
+## 工具类 / inline style
+
+少量场景需要 inline style，**仅限**以下情况：
 
 | 场景 | 写法 |
 |---|---|
 | 等宽字体 | `style="font-family:var(--font-mono);"` |
-| Display 字体（大数字标题） | `style="font-family:var(--font-display);font-size:20px;font-weight:700;"` |
 | 次级文字色 | `style="color:var(--text-2);"` |
 | 三级文字色 | `style="color:var(--text-3);"` |
 | 主色文字 | `style="color:var(--primary);"` |
@@ -495,38 +102,30 @@ document.querySelectorAll('.agent-tabs').forEach(function(bar){
 | 隐藏但保留空间 | `style="visibility:hidden;"` |
 | 主区 dimmed 态（弹窗叠加时） | `style="pointer-events:none;filter:brightness(0.97);"` |
 
-### 展开/收起切换（badge 列表过长）
+不要 inline 颜色 hex / px 圆角 / 字号 —— 用 token 引用或专用类。
+
+## 非对称 form-actions（左 danger / 右 cancel-save）
+
+编辑型表单底部，左侧放危险操作（删除），右侧放主流程按钮（取消 + 保存）：
 
 ```html
-<div class="model-badges">
-  <span class="badge">item-1</span>
-  <span class="badge">item-2</span>
-  <!-- ... 很多 item -->
+<div class="form-actions" style="justify-content:space-between;">
+  <button class="btn btn-danger btn-sm">Delete</button>
+  <div style="display:flex;gap:8px;">
+    <button class="btn btn-ghost btn-sm">Cancel</button>
+    <button class="btn btn-primary btn-sm">Save</button>
+  </div>
 </div>
-<button class="model-toggle"
-        onclick="var b=this.previousElementSibling;b.classList.toggle('expanded');this.textContent=b.classList.contains('expanded')?'收起':'展开 N+';">
-  <span style="color:var(--primary);">展开 N+</span>
-</button>
 ```
 
-要点：
+创建场景不渲染左侧 danger 按钮即可回到默认右对齐。可视样例见 [`#comp-form-actions`](../assets/components.html#comp-form-actions)。
 
-- `.model-badges` 默认 `max-height` 限制只显示 1-2 行
-- `.model-badges.expanded` 解除高度限制
-- `.model-toggle` 是主色文字按钮（非块状），文案在「展开 N+ / 收起」之间切换
-- 同模式适用任何「列表过长需要折叠」场景，不限于 badge
+## 何时扩本表
 
----
+新需求出现一个现有组件都不匹配的视觉元素时：
 
-## PRD 面板专用类
+1. 判断是「通用原语」还是「业务衍生」
+2. 通用原语：在 `assets/components.html` 加一行 `comp-{name}`（4 态样例 + 应用场景），`assets/shared.css` 补对应类（用 var() 引用，不写 hex/px），回到本表「通用组件原语」段追加一行
+3. 业务衍生：`assets/shared.css` 补类，在本表「业务衍生类」段追加一行；**不**在 `components.html` 展示
 
-```
-.prd-panel-wrap        宽度 360px，relative，align-self:stretch
-.prd-panel             absolute inset:0，flex-column，overflow:hidden
-.prd-panel__title      面板标题（14px，加粗，flex-shrink:0）
-.prd-panel__body       可滚动内容区（flex:1，min-height:0，overflow-y:auto）
-.prd-section           功能概览分组
-.prd-section__title    分组标题（12px，主色，加粗）
-.prd-section ul        无序列表（padding-left:16px）
-.prd-section li        条目（11.5px，line-height:1.7，text-2 色）
-```
+**严禁**：把新组件 hex 值散写在原型 HTML 的 inline style 或新的 `<style>` 段——视觉规范必须沉淀到 components.html + shared.css。

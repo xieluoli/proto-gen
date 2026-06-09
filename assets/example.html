@@ -4,8 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>proto-gen 示例 · macOS 窗口布局</title>
-<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet" />
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="theme.css" />
 <link rel="stylesheet" href="shared.css" />
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
@@ -44,10 +43,10 @@
         <!-- ① 左侧边栏 -->
         <div class="app-sidebar">
           <div style="padding:4px 14px 12px;display:flex;align-items:center;gap:8px;">
-            <div style="width:22px;height:22px;border-radius:5px;background:var(--primary);display:flex;align-items:center;justify-content:center;">
-              <i data-lucide="zap" style="width:12px;height:12px;color:#fff;stroke-width:2.5;"></i>
+            <div style="width:22px;height:22px;border-radius:var(--radius-chip);background:var(--primary);display:flex;align-items:center;justify-content:center;">
+              <i data-lucide="zap" style="width:12px;height:12px;color:var(--primary-foreground);stroke-width:2.5;"></i>
             </div>
-            <span style="font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:-0.02em;">Demo App</span>
+            <span style="font-family:var(--font-sans);font-size:14px;font-weight:600;letter-spacing:-0.02em;">Demo App</span>
           </div>
           <div class="sidebar-section-header" style="padding-top:4px;">主要功能</div>
           <div class="sidebar-item active"><i data-lucide="home" class="nav-icon"></i>首页</div>
@@ -58,9 +57,9 @@
           <div class="sidebar-divider"></div>
           <div class="sidebar-section-header">收藏夹</div>
           <div class="sidebar-apps">
-            <div class="sidebar-item"><span class="nav-icon" style="background:linear-gradient(135deg,#6366F1,#818cf8);color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:3px;">A</span>项目 Alpha</div>
-            <div class="sidebar-item"><span class="nav-icon" style="background:linear-gradient(135deg,#10B981,#34d399);color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:3px;">B</span>项目 Beta</div>
-            <div class="sidebar-item"><span class="nav-icon" style="background:linear-gradient(135deg,#F59E0B,#fbbf24);color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:3px;">G</span>项目 Gamma</div>
+            <div class="sidebar-item"><span class="nav-icon" style="background:linear-gradient(135deg,var(--primary),color-mix(in oklch,var(--primary) 70%,white));color:var(--primary-foreground);font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:3px;">A</span>项目 Alpha</div>
+            <div class="sidebar-item"><span class="nav-icon" style="background:linear-gradient(135deg,var(--success),color-mix(in oklch,var(--success) 70%,white));color:var(--primary-foreground);font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:3px;">B</span>项目 Beta</div>
+            <div class="sidebar-item"><span class="nav-icon" style="background:linear-gradient(135deg,var(--warning),color-mix(in oklch,var(--warning) 70%,white));color:var(--primary-foreground);font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:3px;">G</span>项目 Gamma</div>
           </div>
         </div>
 
@@ -80,7 +79,7 @@
           <!-- 页头 -->
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
             <div>
-              <div style="font-family:var(--font-display);font-size:20px;font-weight:700;">Dashboard</div>
+              <div style="font-family:var(--font-sans);font-size:20px;font-weight:700;">Dashboard</div>
               <div style="color:var(--text-2);font-size:12px;margin-top:2px;">欢迎回来，今天有 3 项任务待处理</div>
             </div>
             <button class="btn btn-primary"><i data-lucide="plus" style="width:14px;height:14px;"></i>新建项目</button>
@@ -90,17 +89,17 @@
           <div class="grid-3" style="margin-bottom:18px;">
             <div class="info-card">
               <div style="color:var(--text-2);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">活跃项目</div>
-              <div style="font-family:var(--font-display);font-size:24px;font-weight:700;margin-top:6px;">12</div>
+              <div style="font-family:var(--font-sans);font-size:24px;font-weight:700;margin-top:6px;">12</div>
               <div style="color:var(--success);font-size:11px;margin-top:4px;">↑ 较上周 +2</div>
             </div>
             <div class="info-card">
               <div style="color:var(--text-2);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">待处理任务</div>
-              <div style="font-family:var(--font-display);font-size:24px;font-weight:700;margin-top:6px;">3</div>
+              <div style="font-family:var(--font-sans);font-size:24px;font-weight:700;margin-top:6px;">3</div>
               <div style="color:var(--text-2);font-size:11px;margin-top:4px;">需在本周完成</div>
             </div>
             <div class="info-card">
               <div style="color:var(--text-2);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">本月用量</div>
-              <div style="font-family:var(--font-display);font-size:24px;font-weight:700;margin-top:6px;">67%</div>
+              <div style="font-family:var(--font-sans);font-size:24px;font-weight:700;margin-top:6px;">67%</div>
               <div class="progress-bar" style="margin-top:6px;">
                 <div class="progress-fill indigo" style="width:67%;"></div>
               </div>
@@ -112,7 +111,7 @@
           <div class="info-card" style="padding:0;">
             <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);">
               <div style="display:flex;align-items:center;gap:10px;">
-                <span class="nav-icon" style="width:24px;height:24px;background:linear-gradient(135deg,#6366F1,#818cf8);color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:5px;">A</span>
+                <span class="nav-icon" style="width:24px;height:24px;background:linear-gradient(135deg,var(--primary),color-mix(in oklch,var(--primary) 70%,white));color:var(--primary-foreground);font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--radius-chip);">A</span>
                 <div>
                   <div style="font-size:13px;font-weight:500;">项目 Alpha 已部署</div>
                   <div style="color:var(--text-3);font-size:11px;margin-top:2px;">10 分钟前</div>
@@ -122,7 +121,7 @@
             </div>
             <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);">
               <div style="display:flex;align-items:center;gap:10px;">
-                <span class="nav-icon" style="width:24px;height:24px;background:linear-gradient(135deg,#10B981,#34d399);color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:5px;">B</span>
+                <span class="nav-icon" style="width:24px;height:24px;background:linear-gradient(135deg,var(--success),color-mix(in oklch,var(--success) 70%,white));color:var(--primary-foreground);font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--radius-chip);">B</span>
                 <div>
                   <div style="font-size:13px;font-weight:500;">项目 Beta 配置已更新</div>
                   <div style="color:var(--text-3);font-size:11px;margin-top:2px;">1 小时前</div>
@@ -132,7 +131,7 @@
             </div>
             <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;">
               <div style="display:flex;align-items:center;gap:10px;">
-                <span class="nav-icon" style="width:24px;height:24px;background:linear-gradient(135deg,#F59E0B,#fbbf24);color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:5px;">G</span>
+                <span class="nav-icon" style="width:24px;height:24px;background:linear-gradient(135deg,var(--warning),color-mix(in oklch,var(--warning) 70%,white));color:var(--primary-foreground);font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--radius-chip);">G</span>
                 <div>
                   <div style="font-size:13px;font-weight:500;">项目 Gamma 待审核</div>
                   <div style="color:var(--text-3);font-size:11px;margin-top:2px;">3 小时前</div>
@@ -186,10 +185,10 @@
         <!-- 左侧边栏（保持原状） -->
         <div class="app-sidebar">
           <div style="padding:4px 14px 12px;display:flex;align-items:center;gap:8px;">
-            <div style="width:22px;height:22px;border-radius:5px;background:var(--primary);display:flex;align-items:center;justify-content:center;">
-              <i data-lucide="zap" style="width:12px;height:12px;color:#fff;stroke-width:2.5;"></i>
+            <div style="width:22px;height:22px;border-radius:var(--radius-chip);background:var(--primary);display:flex;align-items:center;justify-content:center;">
+              <i data-lucide="zap" style="width:12px;height:12px;color:var(--primary-foreground);stroke-width:2.5;"></i>
             </div>
-            <span style="font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:-0.02em;">Demo App</span>
+            <span style="font-family:var(--font-sans);font-size:14px;font-weight:600;letter-spacing:-0.02em;">Demo App</span>
           </div>
           <div class="sidebar-section-header" style="padding-top:4px;">主要功能</div>
           <div class="sidebar-item active"><i data-lucide="home" class="nav-icon"></i>首页</div>
@@ -214,20 +213,20 @@
         <div class="app-main" style="pointer-events:none;filter:brightness(0.97);">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
             <div>
-              <div style="font-family:var(--font-display);font-size:20px;font-weight:700;">Dashboard</div>
+              <div style="font-family:var(--font-sans);font-size:20px;font-weight:700;">Dashboard</div>
               <div style="color:var(--text-2);font-size:12px;margin-top:2px;">欢迎回来，今天有 3 项任务待处理</div>
             </div>
             <button class="btn btn-primary"><i data-lucide="plus" style="width:14px;height:14px;"></i>新建项目</button>
           </div>
           <div class="grid-3">
-            <div class="info-card"><div style="color:var(--text-2);font-size:11px;text-transform:uppercase;">活跃项目</div><div style="font-family:var(--font-display);font-size:24px;font-weight:700;margin-top:6px;">12</div></div>
-            <div class="info-card"><div style="color:var(--text-2);font-size:11px;text-transform:uppercase;">待处理任务</div><div style="font-family:var(--font-display);font-size:24px;font-weight:700;margin-top:6px;">3</div></div>
-            <div class="info-card"><div style="color:var(--text-2);font-size:11px;text-transform:uppercase;">本月用量</div><div style="font-family:var(--font-display);font-size:24px;font-weight:700;margin-top:6px;">67%</div></div>
+            <div class="info-card"><div style="color:var(--text-2);font-size:11px;text-transform:uppercase;">活跃项目</div><div style="font-family:var(--font-sans);font-size:24px;font-weight:700;margin-top:6px;">12</div></div>
+            <div class="info-card"><div style="color:var(--text-2);font-size:11px;text-transform:uppercase;">待处理任务</div><div style="font-family:var(--font-sans);font-size:24px;font-weight:700;margin-top:6px;">3</div></div>
+            <div class="info-card"><div style="color:var(--text-2);font-size:11px;text-transform:uppercase;">本月用量</div><div style="font-family:var(--font-sans);font-size:24px;font-weight:700;margin-top:6px;">67%</div></div>
           </div>
         </div>
 
         <!-- 遮罩 -->
-        <div style="position:absolute;inset:0;background:rgba(0,0,0,0.25);z-index:10;"></div>
+        <div style="position:absolute;inset:0;background:color-mix(in oklch,var(--foreground) 25%,transparent);z-index:10;"></div>
 
         <!-- 弹窗 -->
         <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:11;">
@@ -249,7 +248,7 @@
               <label class="form-label">类型</label>
               <div class="form-combobox">
                 <input class="form-input" value="标准项目" readonly />
-                <button class="form-chevron"><i data-lucide="chevron-down" style="width:14px;height:14px;"></i></button>
+                <button class="form-chevron"><i data-lucide="chevron-down"></i></button>
               </div>
             </div>
 
@@ -270,8 +269,8 @@
           <div class="prd-section">
             <div class="prd-section__title">Home-02：新建项目弹窗叠加态</div>
             <ul>
-              <li>底层为 Home-01 dimmed 态（亮度 0.97 + pointer-events 禁用）</li>
-              <li>展示半透明遮罩（rgba(0,0,0,0.25)）覆盖主区</li>
+              <li>底层为 Home-01 失活态（暗化 + 点击穿透禁用）</li>
+              <li>展示半透明遮罩覆盖主区</li>
               <li>展示居中弹窗 form-dialog，右上角有「X」关闭按钮（modal-close-x）</li>
               <li>展示弹窗标题「新建项目」</li>
               <li>展示三个表单字段：项目名称（input）、描述（textarea）、类型（combobox 下拉）</li>

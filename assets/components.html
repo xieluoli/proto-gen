@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>proto-gen 组件库</title>
+<link rel="stylesheet" href="theme.css" />
+<link rel="stylesheet" href="shared.css" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  /* ============ 组件库专用 layout（不污染 shared.css，避免业务原型反受影响） ============ */
+  body { padding: 0; background: var(--background); }
+  .gallery { max-width: 1320px; margin: 0 auto; padding: 40px 32px 100px; }
+  .gallery-header { margin-bottom: 36px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+  .gallery-header h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.02em; }
+  .gallery-header .lead { font-size: 13px; color: var(--text-2); line-height: 1.65; max-width: 720px; }
+  .gallery-header .theme-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 14px;
+    padding: 5px 12px; background: var(--primary-light); color: var(--primary);
+    border: 1px solid var(--info-border); border-radius: var(--radius-full);
+    font-size: 11px; font-weight: 600;
+  }
+  .gallery-header .theme-pill code { font-family: var(--font-mono); font-size: 10px; padding: 1px 6px; background: var(--background); border-radius: 3px; }
+  .gallery-toc {
+    margin-top: 18px; display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .gallery-toc a {
+    font-size: 11px; padding: 4px 10px; border-radius: var(--radius-full);
+    background: var(--muted); color: var(--text-2); text-decoration: none;
+    border: 1px solid var(--border);
+  }
+  .gallery-toc a:hover { background: var(--primary-light); color: var(--primary); border-color: var(--info-border); }
+
+  .comp-section { margin-bottom: 40px; }
+  .comp-section > h2 {
+    font-size: 18px; font-weight: 600; letter-spacing: -0.01em;
+    margin-bottom: 12px; padding-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .comp-row {
+    display: grid;
+    grid-template-columns: 200px repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: stretch;
+  }
+  .comp-row:last-child { border-bottom: 0; }
+  .comp-row__meta { display: flex; flex-direction: column; gap: 4px; }
+  .comp-row__name { font-size: 13px; font-weight: 600; color: var(--foreground); }
+  .comp-row__class {
+    font-family: var(--font-mono); font-size: 10.5px;
+    color: var(--primary); cursor: pointer;
+    padding: 2px 0; word-break: break-word;
+  }
+  .comp-row__class:hover { text-decoration: underline; }
+  .comp-row__class.is-copied { color: var(--success); }
+  .comp-row__desc { font-size: 11px; color: var(--text-3); line-height: 1.5; margin-top: 2px; }
+
+  .state-col { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .state-col__label {
+    font-size: 9.5px; color: var(--text-3); text-transform: uppercase;
+    letter-spacing: 0.08em; font-weight: 600;
+  }
+  .state-col__demo {
+    padding: 14px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-panel);
+    display: flex; align-items: center; justify-content: center;
+    min-height: 64px;
+    overflow: hidden;
+  }
+  .state-col__demo--stretch { align-items: stretch; justify-content: stretch; flex-direction: column; }   /* 不再 padding:0；继承默认 14px 16px 保证呼吸感 */
+  .state-col__demo--vert { flex-direction: column; gap: 6px; align-items: stretch; }
+  .state-col__demo--overflow { overflow: visible; }   /* combobox 展开态、popover 等需要 menu 浮出父容器时用 */
+  .state-col__demo--na {
+    color: var(--text-3); font-size: 11px; font-style: italic;
+    background: transparent; border-style: dashed;
+  }
+
+  /* ============ 强制态：用 .is-hover 显式触发，方便直观看到 ============ */
+  .btn-primary.is-hover { background: var(--primary-hover); box-shadow: 0 4px 12px color-mix(in oklch, var(--primary) 35%, transparent); transform: translateY(-1px); }
+  .btn-secondary.is-hover { border-color: var(--border-2); background: var(--muted); }
+  .btn-ghost.is-hover { background: var(--muted); color: var(--foreground); }
+  .btn-danger.is-hover { background: var(--destructive); color: var(--destructive-foreground); }
+  .input.is-hover, .form-input.is-hover { border-color: var(--ring); box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 30%, transparent); }
+  .sidebar-item.is-hover { background: color-mix(in oklch, var(--sidebar-accent) 60%, transparent); color: var(--sidebar-foreground); }
+  .inline-tab.is-hover { background: var(--muted); }
+  .empty-card.is-hover { border-color: var(--primary); background: var(--primary-light); }
+
+  /* loading 态 spinner */
+  .demo-spinner {
+    display: inline-block; width: 14px; height: 14px;
+    border: 2px solid color-mix(in oklch, currentColor 30%, transparent);
+    border-top-color: currentColor; border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    flex-shrink: 0;
+  }
+
+  /* token table */
+  .token-table {
+    width: 100%; font-size: 12px; border-collapse: collapse; margin-top: 8px;
+  }
+  .token-table th, .token-table td {
+    text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .token-table th { font-size: 10px; font-weight: 600; color: var(--text-3); letter-spacing: 0.06em; text-transform: uppercase; }
+  .token-table .token-name { font-family: var(--font-mono); font-size: 11px; color: var(--primary); }
+  .token-table .token-swatch {
+    display: inline-block; width: 18px; height: 18px;
+    border-radius: 4px; border: 1px solid var(--border);
+    vertical-align: middle; margin-right: 8px;
+  }
+  .token-table .token-value { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-2); }
+
+  .copy-tip {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--foreground); color: var(--background);
+    padding: 8px 14px; border-radius: var(--radius-btn);
+    font-size: 12px; opacity: 0; transition: opacity 0.18s;
+    pointer-events: none; z-index: 200;
+  }
+  .copy-tip.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="gallery">
+
+  <!-- ============ Header ============ -->
+  <header class="gallery-header">
+    <h1>proto-gen 组件库</h1>
+    <p class="lead">
+      通用组件原语清单。写需求 / PRD 时直接引用类名（如「展示主按钮，应用 <code>.btn-primary</code> 风格」），
+      不要在 PRD 文档中复述颜色 / 字号 / 圆角等具体值。视觉规范由 <code>theme.css</code> 注入，可一键切换主题。
+    </p>
+    <p class="lead" style="margin-top:8px;color:var(--text-3);">
+      仅展示<strong style="color:var(--text-2);">通用</strong>组件原语；项目业务衍生类
+      （如 <code>.channel-card</code> / <code>.agent-tabs</code> / <code>.apply-popover</code> / <code>.badge-free</code> 等）
+      请查 <code>references/css-components.md</code>「业务衍生」段。
+    </p>
+    <div class="theme-pill">
+      <i data-lucide="palette" style="width:12px;height:12px;"></i>
+      当前主题
+      <code>724-1</code>
+      <span style="color:var(--text-3);font-weight:400;">切换 →</span>
+      <code>./extract-theme.sh &lt;tweakcn-url&gt;</code>
+    </div>
+    <nav class="gallery-toc">
+      <a href="#sec-button">按钮</a>
+      <a href="#sec-input">输入</a>
+      <a href="#sec-form">表单</a>
+      <a href="#sec-card">卡片</a>
+      <a href="#sec-badge">Badge</a>
+      <a href="#sec-tabs">Tabs</a>
+      <a href="#sec-dialog">弹窗</a>
+      <a href="#sec-sidebar">侧栏</a>
+      <a href="#sec-toggle">Toggle</a>
+      <a href="#sec-progress">进度 / 动效</a>
+      <a href="#sec-prd">PRD 旁注</a>
+      <a href="#sec-tokens">Token 速查</a>
+    </nav>
+  </header>
+
+  <!-- ============ 按钮 ============ -->
+  <section class="comp-section" id="sec-button">
+    <h2>按钮 · Button</h2>
+
+    <div class="comp-row" id="comp-btn-primary">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">主按钮 · Primary</div>
+        <div class="comp-row__class" data-copy=".btn .btn-primary">.btn .btn-primary</div>
+        <div class="comp-row__desc">主行动 CTA、表单提交、对话框确认</div>
+      </div>
+      <div class="state-col"><span class="state-col__label">常态</span>
+        <div class="state-col__demo"><button class="btn btn-primary">Button</button></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">Hover</span>
+        <div class="state-col__demo"><button class="btn btn-primary is-hover">Button</button></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">禁用</span>
+        <div class="state-col__demo"><button class="btn btn-primary" disabled>Button</button></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">Loading</span>
+        <div class="state-col__demo"><button class="btn btn-primary"><span class="demo-spinner"></span>Button</button></div>
+      </div>
+    </div>
+
+    <div class="comp-row" id="comp-btn-secondary">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">次按钮 · Secondary</div>
+        <div class="comp-row__class" data-copy=".btn .btn-secondary">.btn .btn-secondary</div>
+        <div class="comp-row__desc">取消、副行动、并列于主按钮的次选择</div>
+      </div>
+      <div class="state-col"><span class="state-col__label">常态</span>
+        <div class="state-col__demo"><button class="btn btn-secondary">Button</button></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">Hover</span>
+        <div class="state-col__demo"><button class="btn btn-secondary is-hover">Button</button></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">禁用</span>
+        <div class="state-col__demo"><button class="btn btn-secondary" disabled style="opacity:0.5;cursor:not-allowed;">Button</button></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">Loading</span>
+        <div class="state-col__demo state-col__demo--na">—</div>
+      </div>
+    </div>
+
+    <div class="comp-row" id="comp-btn-ghost">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">幽灵按钮 · Ghost</div>
+        <div class="comp-row__class" data-copy=".btn .btn-ghost">.btn .btn-ghost</div>
+        <div class="comp-row__desc">透明底，弱化次级动作；常用于工具栏、卡片内联</div>
+      </div>
+      <div class="state-col"><span class="state-col__label">常态</span>
+        <div class="state-col__demo"><button class="btn btn-ghost">Button</button></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">Hover</span>
+        <div class="state-col__demo"><button class="btn btn-ghost is-hover">Button</button></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">禁用</span>
+        <div class="state-col__demo"><button class="btn btn-ghost" disabled style="opacity:0.5;cursor:not-allowed;">Button</button></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">Loading</span>
+        <div class="state-col__demo state-col__demo--na">—</div>
+      </div>
+    </div>
+
+    <div class="comp-row" id="comp-btn-danger">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">危险按钮 · Danger</div>
+        <div class="comp-row__class" data-copy=".btn .btn-danger">.btn .btn-danger</div>
+        <div class="comp-row__desc">破坏性操作：删除、卸载、清空、重置</div>
+      </div>
+      <div class="state-col"><span class="state-col__label">常态</span>
+        <div class="state-col__demo"><button class="btn btn-danger">Button</button></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">Hover</span>
+        <div class="state-col__demo"><button class="btn btn-danger is-hover">Button</button></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">禁用</span>
+        <div class="state-col__demo"><button class="btn btn-danger" disabled style="opacity:0.5;cursor:not-allowed;">Button</button></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">Loading</span>
+        <div class="state-col__demo state-col__demo--na">—</div>
+      </div>
+    </div>
+
+    <div class="comp-row" id="comp-btn-sizes">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">按钮尺寸 · Sizes</div>
+        <div class="comp-row__class" data-copy=".btn-sm / .btn-lg">.btn-sm / .btn-lg</div>
+        <div class="comp-row__desc">紧凑场景用 sm，强调主行动用 lg</div>
+      </div>
+      <div class="state-col"><span class="state-col__label">Small</span>
+        <div class="state-col__demo"><button class="btn btn-primary btn-sm">Button</button></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">Default</span>
+        <div class="state-col__demo"><button class="btn btn-primary">Button</button></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">Large</span>
+        <div class="state-col__demo"><button class="btn btn-primary btn-lg">Button</button></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">带图标</span>
+        <div class="state-col__demo"><button class="btn btn-primary"><i data-lucide="download" style="width:14px;height:14px"></i>Button</button></div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============ 输入 ============ -->
+  <section class="comp-section" id="sec-input">
+    <h2>输入 · Input</h2>
+
+    <div class="comp-row" id="comp-input">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">输入框 · Input</div>
+        <div class="comp-row__class" data-copy=".input">.input</div>
+        <div class="comp-row__desc">通用单行文本输入</div>
+      </div>
+      <div class="state-col"><span class="state-col__label">常态</span>
+        <div class="state-col__demo"><input class="input" style="max-width:160px;" placeholder="Placeholder" /></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">Focus</span>
+        <div class="state-col__demo"><input class="input is-hover" style="max-width:160px;" value="Focused" /></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">只读</span>
+        <div class="state-col__demo"><input class="input" style="max-width:160px;" value="Read-only" readonly /></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">禁用</span>
+        <div class="state-col__demo"><input class="input" style="max-width:160px;opacity:0.5;cursor:not-allowed;" value="Disabled" disabled /></div>
+      </div>
+    </div>
+
+    <div class="comp-row" id="comp-input-mono">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">等宽输入框 · Mono Input</div>
+        <div class="comp-row__class" data-copy=".input.input-mono">.input.input-mono</div>
+        <div class="comp-row__desc">等宽字体，用于 API Key / 路径 / 命令等</div>
+      </div>
+      <div class="state-col" style="grid-column: span 4;"><span class="state-col__label">常态</span>
+        <div class="state-col__demo"><input class="input input-mono" style="max-width:240px;" value="mono-text-content" /></div>
+      </div>
+    </div>
+
+    <div class="comp-row" id="comp-textarea">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">多行文本 · Textarea</div>
+        <div class="comp-row__class" data-copy=".form-textarea">.form-textarea</div>
+        <div class="comp-row__desc">多行输入；可垂直拖拽改高度</div>
+      </div>
+      <div class="state-col"><span class="state-col__label">常态</span>
+        <div class="state-col__demo state-col__demo--stretch"><textarea class="form-textarea" rows="3" placeholder="Placeholder"></textarea></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">有内容</span>
+        <div class="state-col__demo state-col__demo--stretch"><textarea class="form-textarea" rows="3">Multi-line text content here.</textarea></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">禁用</span>
+        <div class="state-col__demo state-col__demo--stretch"><textarea class="form-textarea" rows="3" style="opacity:0.5;" disabled>Disabled</textarea></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">—</span>
+        <div class="state-col__demo state-col__demo--na">—</div>
+      </div>
+    </div>
+
+    <div class="comp-row" id="comp-combobox">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">下拉选择 · Combobox</div>
+        <div class="comp-row__class" data-copy=".form-combobox">.form-combobox</div>
+        <div class="comp-row__desc">带 chevron 的下拉选择</div>
+      </div>
+      <div class="state-col"><span class="state-col__label">收起</span>
+        <div class="state-col__demo state-col__demo--vert">
+          <div class="form-combobox"><input class="form-input" value="Selected" readonly /><button class="form-chevron"><i data-lucide="chevron-down"></i></button></div>
+        </div>
+      </div>
+      <div class="state-col"><span class="state-col__label">展开</span>
+        <div class="state-col__demo state-col__demo--vert state-col__demo--overflow" style="min-height:170px;justify-content:flex-start;align-items:stretch;">
+          <div class="form-combobox open">
+            <input class="form-input" value="Selected" readonly />
+            <button class="form-chevron"><i data-lucide="chevron-down"></i></button>
+            <div class="combobox-menu">
+              <div class="combobox-option" style="background:var(--accent);color:var(--accent-foreground);">Option A</div>
+              <div class="combobox-option">Option B</div>
+              <div class="combobox-option">Option C</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="state-col"><span class="state-col__label">禁用</span>
+        <div class="state-col__demo state-col__demo--vert">
+          <div class="form-combobox" style="opacity:0.5;"><input class="form-input" value="Disabled" readonly disabled /><button class="form-chevron" disabled><i data-lucide="chevron-down"></i></button></div>
+        </div>
+      </div>
+      <div class="state-col"><span class="state-col__label">—</span>
+        <div class="state-col__demo state-col__demo--na">—</div>
+      </div>
+    </div>
+
+    <div class="comp-row" id="comp-password">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">密码输入 · Password</div>
+        <div class="comp-row__class" data-copy=".form-input-wrap + .form-eye">.form-input-wrap + .form-eye</div>
+        <div class="comp-row__desc">带眼睛图标切换明文 / 密文</div>
+      </div>
+      <div class="state-col"><span class="state-col__label">密文</span>
+        <div class="state-col__demo state-col__demo--vert">
+          <div class="form-input-wrap"><input class="form-input" type="password" value="secret-value" /><button class="form-eye"><i data-lucide="eye"></i></button></div>
+        </div>
+      </div>
+      <div class="state-col"><span class="state-col__label">明文</span>
+        <div class="state-col__demo state-col__demo--vert">
+          <div class="form-input-wrap"><input class="form-input" type="text" value="secret-value" /><button class="form-eye shown"><i data-lucide="eye-off"></i></button></div>
+        </div>
+      </div>
+      <div class="state-col" style="grid-column: span 2;"><span class="state-col__label">—</span>
+        <div class="state-col__demo state-col__demo--na">—</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 表单 ============ -->
+  <section class="comp-section" id="sec-form">
+    <h2>表单 · Form</h2>
+
+    <div class="comp-row" id="comp-form-group">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">表单字段 · Form Group</div>
+        <div class="comp-row__class" data-copy=".form-group + .form-label + .form-input">.form-group + .form-label + .form-input</div>
+        <div class="comp-row__desc">标准字段：标签 + 输入 + 可选说明</div>
+      </div>
+      <div class="state-col"><span class="state-col__label">默认</span>
+        <div class="state-col__demo state-col__demo--vert">
+          <div class="form-group" style="margin:0;">
+            <label class="form-label">Label</label>
+            <input class="form-input" placeholder="Placeholder" />
+          </div>
+        </div>
+      </div>
+      <div class="state-col"><span class="state-col__label">带说明</span>
+        <div class="state-col__demo state-col__demo--vert">
+          <div class="form-group" style="margin:0;">
+            <label class="form-label">Label</label>
+            <input class="form-input" placeholder="Placeholder" />
+            <div class="form-tip">Helper text describing the field.</div>
+          </div>
+        </div>
+      </div>
+      <div class="state-col"><span class="state-col__label">Small 尺寸</span>
+        <div class="state-col__demo state-col__demo--vert">
+          <div class="form-group" style="margin:0;">
+            <label class="form-label form-label--sm">Label (sm)</label>
+            <input class="form-input form-input--sm" placeholder="Placeholder" />
+          </div>
+        </div>
+      </div>
+      <div class="state-col"><span class="state-col__label">两列并排</span>
+        <div class="state-col__demo state-col__demo--vert">
+          <div class="form-row-2">
+            <div><label class="form-label form-label--sm">Field A</label><input class="form-input form-input--sm" placeholder="..." /></div>
+            <div><label class="form-label form-label--sm">Field B</label><input class="form-input form-input--sm" placeholder="..." /></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="comp-row" id="comp-form-actions">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">表单按钮区 · Form Actions</div>
+        <div class="comp-row__class" data-copy=".form-actions">.form-actions</div>
+        <div class="comp-row__desc">表单底部按钮区；默认右对齐</div>
+      </div>
+      <div class="state-col" style="grid-column: span 2;"><span class="state-col__label">默认（右对齐）</span>
+        <div class="state-col__demo state-col__demo--stretch">
+          <div class="form-actions" style="margin:0;">
+            <button class="btn btn-ghost btn-sm">Cancel</button>
+            <button class="btn btn-primary btn-sm">Confirm</button>
+          </div>
+        </div>
+      </div>
+      <div class="state-col" style="grid-column: span 2;"><span class="state-col__label">两端对齐（左 danger）</span>
+        <div class="state-col__demo state-col__demo--stretch">
+          <div class="form-actions" style="margin:0;justify-content:space-between;">
+            <button class="btn btn-danger btn-sm">Delete</button>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-ghost btn-sm">Cancel</button>
+              <button class="btn btn-primary btn-sm">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 卡片 ============ -->
+  <section class="comp-section" id="sec-card">
+    <h2>卡片 · Card</h2>
+
+    <div class="comp-row" id="comp-info-card">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">信息卡 · Info Card</div>
+        <div class="comp-row__class" data-copy=".info-card">.info-card</div>
+        <div class="comp-row__desc">通用信息容器；内部用 .info-row 分行</div>
+      </div>
+      <div class="state-col" style="grid-column: span 2;"><span class="state-col__label">通用容器</span>
+        <div class="state-col__demo state-col__demo--stretch">
+          <div class="info-card" style="margin:0;">
+            <div style="font-size:13px;font-weight:600;margin-bottom:8px;">Card Title</div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.6;">Card content. Supports any inner layout: text, fields, lists, etc.</div>
+          </div>
+        </div>
+      </div>
+      <div class="state-col" style="grid-column: span 2;"><span class="state-col__label">字段列表（含 info-row）</span>
+        <div class="state-col__demo state-col__demo--stretch">
+          <div class="info-card" style="padding:0;margin:0;">
+            <div class="info-row"><span class="info-label">Label A</span><span class="info-value">Value A</span></div>
+            <div class="info-row"><span class="info-label">Label B</span><span class="info-value" style="font-family:var(--font-mono);">v1.0.0</span></div>
+            <div class="info-row"><span class="info-label">Label C</span><span class="info-value"><span class="badge badge-success">Active</span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="comp-row" id="comp-empty-card">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">空状态卡片 · Empty State</div>
+        <div class="comp-row__class" data-copy=".empty-card">.empty-card</div>
+        <div class="comp-row__desc">空列表 / 空库引导添加首条数据；虚线 + 居中加号</div>
+      </div>
+      <div class="state-col" style="grid-column: span 2;"><span class="state-col__label">常态</span>
+        <div class="state-col__demo state-col__demo--stretch">
+          <div class="empty-card" style="margin:0;">
+            <div class="empty-card__icon"><i data-lucide="plus" style="width:18px;height:18px;"></i></div>
+            <div class="empty-card__title">Empty title</div>
+            <div class="empty-card__desc">Empty description line goes here.</div>
+          </div>
+        </div>
+      </div>
+      <div class="state-col" style="grid-column: span 2;"><span class="state-col__label">Hover</span>
+        <div class="state-col__demo state-col__demo--stretch">
+          <div class="empty-card is-hover" style="margin:0;">
+            <div class="empty-card__icon"><i data-lucide="plus" style="width:18px;height:18px;"></i></div>
+            <div class="empty-card__title">Empty title</div>
+            <div class="empty-card__desc">Empty description line goes here.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Badge ============ -->
+  <section class="comp-section" id="sec-badge">
+    <h2>Badge</h2>
+
+    <div class="comp-row" id="comp-badge">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">徽标 · Badge</div>
+        <div class="comp-row__class" data-copy=".badge .badge-{tone}">.badge .badge-{tone}</div>
+        <div class="comp-row__desc">状态指示；font-weight 600；纯文字 + 颜色背景</div>
+      </div>
+      <div class="state-col"><span class="state-col__label">Default</span>
+        <div class="state-col__demo"><span class="badge badge-default">Default</span></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">Success</span>
+        <div class="state-col__demo"><span class="badge badge-success">Success</span></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">Warning</span>
+        <div class="state-col__demo"><span class="badge badge-warn">Warning</span></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">Error / Info</span>
+        <div class="state-col__demo" style="gap:8px;"><span class="badge badge-error">Error</span><span class="badge badge-info">Info</span></div>
+      </div>
+    </div>
+
+    <div class="comp-row" id="comp-badge-icon">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">含图标徽标 · Badge with Icon</div>
+        <div class="comp-row__class" data-copy=".badge + lucide icon">.badge + lucide icon</div>
+        <div class="comp-row__desc">在 badge 内部加 10×10 icon；仅检测态用 spinner，其余状态纯文字</div>
+      </div>
+      <div class="state-col"><span class="state-col__label">Success</span>
+        <div class="state-col__demo"><span class="badge badge-success"><i data-lucide="check" style="width:10px;height:10px;"></i>Success</span></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">Warning</span>
+        <div class="state-col__demo"><span class="badge badge-warn"><i data-lucide="alert-triangle" style="width:10px;height:10px;"></i>Warning</span></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">Error</span>
+        <div class="state-col__demo"><span class="badge badge-error"><i data-lucide="circle-alert" style="width:10px;height:10px;"></i>Error</span></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">Loading</span>
+        <div class="state-col__demo"><span class="badge badge-info"><span class="demo-spinner" style="width:10px;height:10px;border-width:1.5px;"></span>Loading</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Tabs ============ -->
+  <section class="comp-section" id="sec-tabs">
+    <h2>Tabs</h2>
+
+    <div class="comp-row" id="comp-inline-tabs">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">行内 Tab · Inline Tabs</div>
+        <div class="comp-row__class" data-copy=".inline-tabs / .inline-tab">.inline-tabs / .inline-tab</div>
+        <div class="comp-row__desc">纯文字 tab，用于「筛选 / 分类切换」</div>
+      </div>
+      <div class="state-col" style="grid-column: span 4;"><span class="state-col__label">常态 / Hover</span>
+        <div class="state-col__demo state-col__demo--stretch">
+          <div class="inline-tabs" style="margin:0;">
+            <button class="inline-tab active">Tab A</button>
+            <button class="inline-tab">Tab B</button>
+            <button class="inline-tab is-hover">Tab C (hover)</button>
+            <button class="inline-tab" disabled style="opacity:0.5;cursor:not-allowed;">Tab D (disabled)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 弹窗 ============ -->
+  <section class="comp-section" id="sec-dialog">
+    <h2>弹窗 · Dialog</h2>
+
+    <div class="comp-row" id="comp-form-dialog">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">表单对话框 · Form Dialog</div>
+        <div class="comp-row__class" data-copy=".form-dialog">.form-dialog</div>
+        <div class="comp-row__desc">常规弹窗容器；右上角 X 关闭；底部 form-actions</div>
+      </div>
+      <div class="state-col" style="grid-column: span 4;"><span class="state-col__label">常态</span>
+        <div class="state-col__demo state-col__demo--stretch" style="background:color-mix(in oklch,var(--muted-foreground) 30%,transparent);padding:24px;">
+          <div class="form-dialog" style="width:380px;margin:0 auto;">
+            <button class="modal-close-x"><i data-lucide="x"></i></button>
+            <div class="form-dialog-title">Dialog Title</div>
+            <div class="form-group"><label class="form-label">Field A</label><input class="form-input" placeholder="Placeholder" /></div>
+            <div class="form-group"><label class="form-label">Field B</label><input class="form-input" placeholder="Placeholder" /></div>
+            <div class="form-actions">
+              <button class="btn btn-ghost btn-sm">Cancel</button>
+              <button class="btn btn-primary btn-sm">Confirm</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="comp-row" id="comp-destructive-confirm">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">危险确认 · Destructive Confirm</div>
+        <div class="comp-row__class" data-copy=".form-dialog（食谱）">.form-dialog（食谱）</div>
+        <div class="comp-row__desc">不可撤销操作；红色警告头 + 横条 + 红色实心确认按钮</div>
+      </div>
+      <div class="state-col" style="grid-column: span 4;"><span class="state-col__label">常态</span>
+        <div class="state-col__demo state-col__demo--stretch" style="background:color-mix(in oklch,var(--muted-foreground) 30%,transparent);padding:24px;">
+          <div class="form-dialog" style="width:360px;margin:0 auto;">
+            <button class="modal-close-x"><i data-lucide="x"></i></button>
+            <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;">
+              <div style="width:32px;height:32px;border-radius:50%;background:color-mix(in oklch,var(--destructive) 12%,transparent);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i data-lucide="alert-triangle" style="width:16px;height:16px;color:var(--destructive);"></i>
+              </div>
+              <div>
+                <div class="form-dialog-title" style="margin-bottom:6px;">Confirm destructive action?</div>
+                <div style="font-size:12px;color:var(--text-2);line-height:1.6;">This action will affect the target item.</div>
+              </div>
+            </div>
+            <div style="background:color-mix(in oklch,var(--destructive) 7%,transparent);border:1px solid color-mix(in oklch,var(--destructive) 20%,transparent);border-radius:6px;padding:10px 12px;margin-bottom:18px;">
+              <div style="font-size:11px;color:var(--destructive);line-height:1.6;display:flex;align-items:flex-start;gap:6px;">
+                <i data-lucide="info" style="width:12px;height:12px;margin-top:2px;flex-shrink:0;"></i>
+                <span>This action cannot be undone.</span>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-ghost btn-sm">Cancel</button>
+              <button class="btn" style="background:var(--destructive);color:var(--destructive-foreground);padding:7px 18px;font-size:12px;">Confirm Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 侧栏 ============ -->
+  <section class="comp-section" id="sec-sidebar">
+    <h2>侧栏 · Sidebar</h2>
+
+    <div class="comp-row" id="comp-sidebar">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">侧栏导航项 · Sidebar Item</div>
+        <div class="comp-row__class" data-copy=".sidebar-item">.sidebar-item</div>
+        <div class="comp-row__desc">主导航；active 用浅主色背景 + 主色文字 + icon</div>
+      </div>
+      <div class="state-col" style="grid-column: span 4;"><span class="state-col__label">常态 / Hover / Active / 含 badge</span>
+        <div class="state-col__demo">
+          <div style="width:220px;background:var(--sidebar);border-radius:var(--radius-panel);padding:12px 10px;">
+            <div class="sidebar-section-header">Section label</div>
+            <div class="sidebar-item"><i data-lucide="circle" class="nav-icon"></i>Item (default)</div>
+            <div class="sidebar-item is-hover"><i data-lucide="circle" class="nav-icon"></i>Item (hover)</div>
+            <div class="sidebar-item active"><i data-lucide="circle-dot" class="nav-icon"></i>Item (active)<span class="si-badge" style="background:color-mix(in oklch,var(--destructive) 15%,transparent);color:var(--destructive);">3</span></div>
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-item" style="opacity:0.5;cursor:not-allowed;"><i data-lucide="circle" class="nav-icon"></i>Item (disabled)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Toggle ============ -->
+  <section class="comp-section" id="sec-toggle">
+    <h2>Toggle 开关</h2>
+
+    <div class="comp-row" id="comp-toggle">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">开关 · Toggle Switch</div>
+        <div class="comp-row__class" data-copy=".toggle-switch">.toggle-switch</div>
+        <div class="comp-row__desc">二态开关；切换即时生效（无需保存按钮）</div>
+      </div>
+      <div class="state-col"><span class="state-col__label">关</span>
+        <div class="state-col__demo"><label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">开</span>
+        <div class="state-col__demo"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">禁用（关）</span>
+        <div class="state-col__demo"><label class="toggle-switch is-disabled"><input type="checkbox" disabled><span class="toggle-slider"></span></label></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">禁用（开）</span>
+        <div class="state-col__demo"><label class="toggle-switch is-disabled"><input type="checkbox" checked disabled><span class="toggle-slider"></span></label></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 进度 / 动效 ============ -->
+  <section class="comp-section" id="sec-progress">
+    <h2>进度 / 动效 · Progress &amp; Loading</h2>
+
+    <div class="comp-row" id="comp-progress-bar">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">进度条 · Progress Bar</div>
+        <div class="comp-row__class" data-copy=".progress-bar / .progress-fill">.progress-bar / .progress-fill</div>
+        <div class="comp-row__desc">线性进度；主色 indigo / 警告色 amber</div>
+      </div>
+      <div class="state-col"><span class="state-col__label">0%</span>
+        <div class="state-col__demo state-col__demo--stretch"><div class="progress-bar"><div class="progress-fill indigo" style="width:0%"></div></div></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">67%</span>
+        <div class="state-col__demo state-col__demo--stretch"><div class="progress-bar"><div class="progress-fill indigo" style="width:67%"></div></div></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">100%</span>
+        <div class="state-col__demo state-col__demo--stretch"><div class="progress-bar"><div class="progress-fill indigo" style="width:100%"></div></div></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">警告色</span>
+        <div class="state-col__demo state-col__demo--stretch"><div class="progress-bar"><div class="progress-fill amber" style="width:88%"></div></div></div>
+      </div>
+    </div>
+
+    <div class="comp-row" id="comp-loading">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">加载指示 · Loading</div>
+        <div class="comp-row__class" data-copy=".pulse-dot / .spin / breathe">.pulse-dot / .spin / breathe</div>
+        <div class="comp-row__desc">脉冲点 / Spinner / 骨架屏呼吸动画</div>
+      </div>
+      <div class="state-col"><span class="state-col__label">脉冲点</span>
+        <div class="state-col__demo" style="gap:8px;"><span class="pulse-dot"></span><span style="font-size:12px;">Running</span></div>
+      </div>
+      <div class="state-col"><span class="state-col__label">Spinner</span>
+        <div class="state-col__demo" style="gap:8px;color:var(--primary);"><i data-lucide="loader-2" class="spin" style="width:18px;height:18px;"></i></div>
+      </div>
+      <div class="state-col" style="grid-column: span 2;"><span class="state-col__label">骨架屏</span>
+        <div class="state-col__demo state-col__demo--stretch">
+          <div style="display:flex;flex-direction:column;gap:6px;width:100%;">
+            <div style="height:12px;background:var(--muted);border-radius:3px;width:80%;animation:breathe 1.5s ease-in-out infinite;"></div>
+            <div style="height:12px;background:var(--muted);border-radius:3px;width:60%;animation:breathe 1.5s ease-in-out infinite;"></div>
+            <div style="height:12px;background:var(--muted);border-radius:3px;width:70%;animation:breathe 1.5s ease-in-out infinite;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRD 旁注 ============ -->
+  <section class="comp-section" id="sec-prd">
+    <h2>PRD 旁注 · PRD Panel <span style="font-size:11px;font-weight:400;color:var(--text-3);margin-left:6px;">（proto-gen 专属）</span></h2>
+
+    <div class="comp-row" id="comp-prd-panel">
+      <div class="comp-row__meta">
+        <div class="comp-row__name">PRD 面板 · PRD Panel</div>
+        <div class="comp-row__class" data-copy=".prd-panel / .prd-section">.prd-panel / .prd-section</div>
+        <div class="comp-row__desc">原型右侧旁注；功能概览段；按 simple-prd 规范撰写</div>
+      </div>
+      <div class="state-col" style="grid-column: span 4;"><span class="state-col__label">常态</span>
+        <div class="state-col__demo state-col__demo--stretch">
+          <div style="width:360px;margin:0 auto;background:var(--background);border:1px solid var(--border);border-radius:var(--radius-card);overflow:hidden;">
+            <div class="prd-panel__title">功能概览</div>
+            <div class="prd-panel__body">
+              <div class="prd-section">
+                <div class="prd-section__title">页面-01：示例</div>
+                <ul>
+                  <li>展示「字段名」+ 输入框，常态用 .form-input 风格</li>
+                  <li>展示主按钮「确认」，应用 .btn-primary 风格</li>
+                  <li>点击确认后跳转下一页</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Token 速查 ============ -->
+  <section class="comp-section" id="sec-tokens">
+    <h2>Token 速查 <span style="font-size:11px;font-weight:400;color:var(--text-3);margin-left:6px;">当前主题：724-1</span></h2>
+    <p style="font-size:12px;color:var(--text-3);margin-bottom:8px;">19 个 shadcn 核心 token + 8 个 sidebar 子 token + 12 个状态色派生 + 字体。切换主题后此区会自动反映新值。</p>
+
+    <h3 style="font-size:13px;font-weight:600;margin:18px 0 6px;color:var(--text-2);">核心（19）</h3>
+    <table class="token-table" id="token-table-core">
+      <thead><tr><th>Token</th><th>值</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td class="token-name">--background</td><td><span class="token-swatch" style="background:var(--background);"></span><span class="token-value" data-token="background"></span></td><td>页面 / 输入框底色</td></tr>
+        <tr><td class="token-name">--foreground</td><td><span class="token-swatch" style="background:var(--foreground);"></span><span class="token-value" data-token="foreground"></span></td><td>主文字</td></tr>
+        <tr><td class="token-name">--card</td><td><span class="token-swatch" style="background:var(--card);"></span><span class="token-value" data-token="card"></span></td><td>卡片底</td></tr>
+        <tr><td class="token-name">--primary</td><td><span class="token-swatch" style="background:var(--primary);"></span><span class="token-value" data-token="primary"></span></td><td>主色，按钮 / 高亮</td></tr>
+        <tr><td class="token-name">--primary-foreground</td><td><span class="token-swatch" style="background:var(--primary-foreground);"></span><span class="token-value" data-token="primary-foreground"></span></td><td>主色上的文字</td></tr>
+        <tr><td class="token-name">--secondary</td><td><span class="token-swatch" style="background:var(--secondary);"></span><span class="token-value" data-token="secondary"></span></td><td>次色</td></tr>
+        <tr><td class="token-name">--muted</td><td><span class="token-swatch" style="background:var(--muted);"></span><span class="token-value" data-token="muted"></span></td><td>弱化背景，分割条</td></tr>
+        <tr><td class="token-name">--muted-foreground</td><td><span class="token-swatch" style="background:var(--muted-foreground);"></span><span class="token-value" data-token="muted-foreground"></span></td><td>次级文字（同 foreground 用 opacity 区分）</td></tr>
+        <tr><td class="token-name">--accent</td><td><span class="token-swatch" style="background:var(--accent);"></span><span class="token-value" data-token="accent"></span></td><td>悬停 / 高亮陪衬色</td></tr>
+        <tr><td class="token-name">--accent-foreground</td><td><span class="token-swatch" style="background:var(--accent-foreground);"></span><span class="token-value" data-token="accent-foreground"></span></td><td>accent 上的文字</td></tr>
+        <tr><td class="token-name">--destructive</td><td><span class="token-swatch" style="background:var(--destructive);"></span><span class="token-value" data-token="destructive"></span></td><td>危险红</td></tr>
+        <tr><td class="token-name">--border</td><td><span class="token-swatch" style="background:var(--border);"></span><span class="token-value" data-token="border"></span></td><td>分割描边</td></tr>
+        <tr><td class="token-name">--ring</td><td><span class="token-swatch" style="background:var(--ring);"></span><span class="token-value" data-token="ring"></span></td><td>focus 环</td></tr>
+        <tr><td class="token-name">--radius</td><td><span class="token-value" data-token="radius"></span></td><td>基准圆角，shadcn cascade 由此派生</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:13px;font-weight:600;margin:18px 0 6px;color:var(--text-2);">Sidebar 子 token</h3>
+    <table class="token-table" id="token-table-sidebar">
+      <thead><tr><th>Token</th><th>值</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td class="token-name">--sidebar</td><td><span class="token-swatch" style="background:var(--sidebar);"></span><span class="token-value" data-token="sidebar"></span></td><td>侧栏底</td></tr>
+        <tr><td class="token-name">--sidebar-foreground</td><td><span class="token-swatch" style="background:var(--sidebar-foreground);"></span><span class="token-value" data-token="sidebar-foreground"></span></td><td>侧栏文字</td></tr>
+        <tr><td class="token-name">--sidebar-accent</td><td><span class="token-swatch" style="background:var(--sidebar-accent);"></span><span class="token-value" data-token="sidebar-accent"></span></td><td>active 项底</td></tr>
+        <tr><td class="token-name">--sidebar-accent-foreground</td><td><span class="token-swatch" style="background:var(--sidebar-accent-foreground);"></span><span class="token-value" data-token="sidebar-accent-foreground"></span></td><td>active 项文字 + icon</td></tr>
+        <tr><td class="token-name">--sidebar-border</td><td><span class="token-swatch" style="background:var(--sidebar-border);"></span><span class="token-value" data-token="sidebar-border"></span></td><td>侧栏与主区分隔</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:13px;font-weight:600;margin:18px 0 6px;color:var(--text-2);">状态色派生</h3>
+    <table class="token-table" id="token-table-status">
+      <thead><tr><th>Token</th><th>值</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td class="token-name">--success</td><td><span class="token-swatch" style="background:var(--success);"></span><span class="token-value" data-token="success"></span></td><td>成功 / 健康</td></tr>
+        <tr><td class="token-name">--success-muted</td><td><span class="token-swatch" style="background:var(--success-muted);"></span><span class="token-value" data-token="success-muted"></span></td><td>badge 浅底</td></tr>
+        <tr><td class="token-name">--warning</td><td><span class="token-swatch" style="background:var(--warning);"></span><span class="token-value" data-token="warning"></span></td><td>警告</td></tr>
+        <tr><td class="token-name">--warning-muted</td><td><span class="token-swatch" style="background:var(--warning-muted);"></span><span class="token-value" data-token="warning-muted"></span></td><td>badge 浅底</td></tr>
+        <tr><td class="token-name">--info</td><td><span class="token-swatch" style="background:var(--info);"></span><span class="token-value" data-token="info"></span></td><td>信息（默认 = primary）</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:13px;font-weight:600;margin:18px 0 6px;color:var(--text-2);">字体</h3>
+    <table class="token-table">
+      <thead><tr><th>Token</th><th>值</th></tr></thead>
+      <tbody>
+        <tr><td class="token-name">--font-sans</td><td class="token-value" data-token="font-sans"></td></tr>
+        <tr><td class="token-name">--font-mono</td><td class="token-value" data-token="font-mono"></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+
+<div class="copy-tip" id="copy-tip">已复制</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.lucide) lucide.createIcons();
+
+    // 点击类名复制
+    const tip = document.getElementById('copy-tip');
+    document.querySelectorAll('[data-copy]').forEach(el => {
+      el.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(el.dataset.copy);
+          el.classList.add('is-copied');
+          tip.textContent = '已复制：' + el.dataset.copy;
+          tip.classList.add('show');
+          setTimeout(() => { tip.classList.remove('show'); el.classList.remove('is-copied'); }, 1400);
+        } catch (e) {
+          tip.textContent = '复制失败：请手动';
+          tip.classList.add('show');
+          setTimeout(() => tip.classList.remove('show'), 1400);
+        }
+      });
+    });
+
+    // 注入实时 token 值
+    const styles = getComputedStyle(document.documentElement);
+    document.querySelectorAll('[data-token]').forEach(el => {
+      const val = styles.getPropertyValue('--' + el.dataset.token).trim();
+      el.textContent = val || '(未设置)';
+    });
+  });
+</script>
+
+</body>
+</html>

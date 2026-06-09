@@ -45,23 +45,34 @@ description: >
 
 ## 设计系统资产
 
-本 skill 自带一套设计系统：
+本 skill 自带一套**主题可插拔**的设计系统：
 
-- `assets/shared.css` — 完整设计 token + 组件类（颜色、字体、按钮、卡片、弹窗、表单、PRD 面板等）
-- `assets/prd-highlight.js` — PRD ↔ 原型 双向 hover 联动运行时（与 `shared.css` 末尾的高亮规则配套）
-- `assets/example.html` — 最小可运行示例，展示 macOS 窗口（左侧边栏 + 顶部工具栏 + 内容区） + 旁注 PRD 面板的整体布局
+- `assets/theme.css` — **主题 token 单一来源**（19 个 shadcn 核心 + 8 个 sidebar 子 token + 12 个状态色派生 + 字体 CDN）。默认 = tweakcn 724-1，可通过 `extract-theme.sh` 切换
+- `assets/shared.css` — 组件类骨架（按钮 / 卡片 / 弹窗 / 表单 / PRD 面板等）；所有颜色 / 字体 / 圆角通过 `var()` 引用 `theme.css` 的 token
+- `assets/components.html` — **人类可视组件清单**（核心交付物）：每个组件含 类名 / 常态 / hover / 禁用 / loading 四态横排 + 应用场景 + Token 速查；产品 / 测试 / AI 浏览器双击查阅
+- `assets/extract-theme.sh` — 主题切换脚本：`./extract-theme.sh <tweakcn-url-or-id>` 一键覆盖 `theme.css`
+- `assets/prd-highlight.js` — PRD ↔ 原型 双向 hover 联动运行时
+- `assets/example.html` — 最小可运行示例
 
-> 首次使用：把 `assets/shared.css` 和 `assets/prd-highlight.js` 一起拷到目标项目的原型目录下，所有生成的 HTML 通过相对路径 `href="shared.css"` + `<script src="prd-highlight.js" defer>` 引用。
-> 想快速预览整体风格，直接在浏览器打开 `assets/example.html`。
+> **首次使用**：把 `theme.css` + `shared.css` + `prd-highlight.js` + `components.html` 四件套拷到目标项目的原型目录下，原型 HTML 头部按顺序引入：
+> ```html
+> <link rel="stylesheet" href="theme.css" />
+> <link rel="stylesheet" href="shared.css" />
+> <script src="prd-highlight.js" defer></script>
+> ```
+> **想换主题**：跑 `./extract-theme.sh <new-tweakcn-url>` 覆盖 `theme.css`，本目录所有原型自动跟随。
+> **想查组件视觉规范**：浏览器打开 `components.html`，左侧 TOC 跳转，点类名复制。
 
 ## References 总览
 
 | 文件 | 内容 | 设备适用 |
 |---|---|---|
 | `references/html-structure.md` | 页面骨架 + 三种叠加态（modal / drawer / subpage） | PC · macOS 系列 |
-| `references/css-components.md` | 全部 CSS 组件类、设计 token、视觉食谱 | PC · macOS 系列 |
+| `references/css-components.md` | **类名 → 用途 → components.html 锚点** 索引表；不再含 hex / px 等具体值 | PC · macOS 系列 |
+| `references/default-theme.md` | proto-gen 默认主题（724-1）说明 + 切换流程 + token 全表 + 切换后必须手工补的 3 项 | 设备无关 |
+| `references/shadcn-tweakcn-theme.md` | **目标项目接入**：当原型要对齐业务项目自身主题时如何覆盖 `theme.css`（sidebar 子 token 陷阱 / 状态色派生 / 字体大小映射 / lucide 踩坑 / 自检清单） | 设备无关；项目接入场景 |
 | `references/prd-rules.md` | PRD bullets 写法、元素描述模板、重复内容引用规则 | 设备无关 |
-| `references/prd-highlight.md` | PRD ↔ 原型 双向 hover 联动：`data-comp` / `data-target` 命名约定、scope、易踩坑、**交付给研发时的剥离须知** | 设备无关 |
+| `references/prd-highlight.md` | PRD ↔ 原型 双向 hover 联动：`data-comp` / `data-target` 命名约定 / scope / 交付剥离须知 | 设备无关 |
 
 ## 工作目录
 
@@ -111,6 +122,7 @@ description: >
 
 - 按页面从上到下视觉顺序排列
 - 一个元素一条 bullet，句式见规范
+- **优先用类名引用替代具体值描述**：不要写「展示一个紫色 #6366F1 圆角 8px 主按钮」，而写「展示主按钮（应用 `.btn-primary` 风格）」。视觉规范由 `theme.css` 与 `components.html` 沉淀，PRD / 旁注只引用类名
 - **重复内容处理**：第一个 section 完整描述；后续 section 对相同通用结构用引用，只描述差异
 - **顺手绑定 highlight**：按 `references/prd-highlight.md` 给 bullet 加 `data-target="<key>"`、给原型组件加 `data-comp="<key>"`，开启 PRD ↔ 原型 双向 hover 联动
 
