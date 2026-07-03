@@ -68,17 +68,43 @@ description: >
 - `assets/shared.css` — 组件类骨架（按钮 / 卡片 / 弹窗 / 表单 / PRD 面板等）；所有颜色 / 字体 / 圆角通过 `var()` 引用 `theme.css` 的 token
 - `assets/components.html` — **人类可视组件清单**（核心交付物）：每个组件含 类名 / 常态 / hover / 禁用 / loading 四态横排 + 应用场景 + Token 速查；产品 / 测试 / AI 浏览器双击查阅
 - `assets/extract-theme.sh` — 主题切换脚本：`./extract-theme.sh <tweakcn-url-or-id>` 一键覆盖 `theme.css`
+- `assets/inject-assets.mjs` — **资产注入脚本**：把 `theme.css` / `shared.css` / `prd-highlight.js` 的最新内容注入原型 HTML 的标记块之间，产出仍是自包含单文件（见下节）
 - `assets/prd-highlight.js` — PRD ↔ 原型 双向 hover 联动运行时
 - `assets/example.html` — 最小可运行示例
 
-> **首次使用**：把 `theme.css` + `shared.css` + `prd-highlight.js` + `components.html` 四件套拷到目标项目的原型目录下，原型 HTML 头部按顺序引入：
-> ```html
-> <link rel="stylesheet" href="theme.css" />
-> <link rel="stylesheet" href="shared.css" />
-> <script src="prd-highlight.js" defer></script>
-> ```
-> **想换主题**：跑 `./extract-theme.sh <new-tweakcn-url>` 覆盖 `theme.css`，本目录所有原型自动跟随。
+> **想换主题**：跑 `./extract-theme.sh <new-tweakcn-url>` 覆盖 `theme.css`，再跑一次注入脚本刷新所有原型。
 > **想查组件视觉规范**：浏览器打开 `components.html`，左侧 TOC 跳转，点类名复制。
+
+## 自包含注入机制（默认交付方式）
+
+原型 HTML 要求**自包含**（研发 / 评审拿到单文件直接双击打开），但 token 与通用组件样式**不手写副本**，只在本 skill 的 `assets/` 维护一份，通过脚本注入。
+
+**标记格式**：`<head>` 内用一对 HTML 注释包住注入块，脚本只替换标记之间的内容：
+
+```html
+<!-- @proto-gen:theme:start -->
+<style>/* 脚本注入 theme.css，勿手改 */</style>
+<!-- @proto-gen:theme:end -->
+<!-- @proto-gen:shared:start -->
+<style>/* 脚本注入 shared.css，勿手改 */</style>
+<!-- @proto-gen:shared:end -->
+<!-- @proto-gen:highlight:start -->
+<script>/* 脚本注入 prd-highlight.js，勿手改 */</script>
+<!-- @proto-gen:highlight:end -->
+<style>/* 页面自有样式写在标记块之外，注入不会碰 */</style>
+```
+
+支持的块：`theme`（必备）、`shared`、`highlight`（按需）。每个标记对全文件只允许出现一次。
+
+**注入 / 批量刷新**（同一命令，参数可混填文件与目录，目录递归收集 `*.html`）：
+
+```bash
+~/.claude/skills/proto-gen/assets/inject-assets.mjs path/to/prototypes/
+```
+
+改完 `theme.css` / `shared.css` 后跑一次，所有带标记的原型统一换皮。脚本幂等，重复执行结果一致。
+
+**存量原型一次性迁移**：把已有 `<style>` 中的 token 段（`:root { --background: ... }` 等）与通用组件样式删掉，原位放入上面的空标记块对（页面特有样式保留在标记块之外的独立 `<style>` 里），然后跑一次注入脚本回填。迁移后该文件即可参与批量刷新。
 
 ## References 总览
 
@@ -93,7 +119,7 @@ description: >
 
 ## 工作目录
 
-由用户在调用时指定，例如 `designs/prototype/` 或 `prototypes/`。所有生成的 HTML 与 `shared.css` 放在同一目录下。
+由用户在调用时指定，例如 `designs/prototype/` 或 `prototypes/`。生成的 HTML 自包含，目录内无需伴随 css / js 文件。
 
 ## 执行步骤
 
@@ -147,19 +173,22 @@ description: >
 
 参考 `references/html-structure.md` 的页面骨架模板，按顺序填入各 section。
 
-最后写入用户指定目录下的 `{filename}.html`。
+`<head>` 内**必须带注入标记块**（见「自包含注入机制」，标记内先留空即可），页面自有样式写在标记块之外。写入用户指定目录下的 `{filename}.html` 后，跑一次注入脚本回填样式：
+
+```bash
+~/.claude/skills/proto-gen/assets/inject-assets.mjs {user-dir}/{filename}.html
+```
 
 ## 输出文件
 
-- **HTML 原型**：`{user-dir}/{name}.html`（包含全部 sections）
-- **运行时依赖**：`{user-dir}/shared.css` + `{user-dir}/prd-highlight.js`（首次使用时各拷一份；同目录下所有原型 HTML 共用）
+- **HTML 原型**：`{user-dir}/{name}.html`（包含全部 sections，自包含单文件，token / 通用组件样式由注入脚本回填）
 - **（可选）PRD md**：如用户需要，同步生成 `{name}.md`
 
 ## 验证
 
 生成后检查：
 
-1. HTML 文件可在浏览器直接打开（`shared.css` 在同目录即可）
+1. HTML 文件可在浏览器直接打开（自包含，无本地文件依赖）；三对 `@proto-gen` 标记块均已由脚本回填、无空块
 2. 各 section 都有 `toc-sidebar` 对应入口
 3. `prd-panel` 内容与 UI 元素一一对应
 4. 没有使用 `references/css-components.md` 中未列出的自造类名
