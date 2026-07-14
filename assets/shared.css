@@ -114,6 +114,7 @@ body {
 /* Input */
 .input { font-family: var(--font-sans); font-size: 13px; padding: 8px 12px; border-radius: var(--radius-btn); border: 1px solid var(--border); background: var(--background); color: var(--foreground); outline: none; width: 100%; }
 .input:focus { border-color: var(--ring); box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 30%, transparent); }
+.input::placeholder { color: var(--text-3); }
 .input-mono { font-family: var(--font-mono); font-size: 11px; }
 
 /* Tabs */
