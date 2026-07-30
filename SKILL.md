@@ -11,6 +11,61 @@ description: >
 
 本 skill 生成统一风格的高保真 HTML 原型，适合 Web/桌面应用产品 MVP 阶段的方案演示与评审。
 
+## 前置依赖（首次在一个项目里使用时检查）
+
+proto-gen 本身自包含，不装任何东西也能生成原型。但原型是需求链条的一环——上游要有需求文档承载「为什么做」，下游要有评审把关质量。下面两项**推荐**装上，缺了就提醒用户并协助安装，用户拒绝则跳过、继续生成。
+
+**1. OpenSpec —— 需求文档骨架**
+
+原型要对应到一份变更提案（proposal + spec），否则原型只是一张图，改了什么、为什么改无处可查。
+
+```bash
+openspec --version                      # 检测
+npm install -g @fission-ai/openspec     # 未安装则装
+openspec init                           # 在项目根初始化，生成 openspec/ 目录
+```
+
+初始化后原型放在 `openspec/changes/<change-name>/prototypes/` 下，与该变更的 proposal.md / spec.md 同级，形成闭环。项目已有自己的原型目录约定时，尊重现有约定。
+
+**2. superpowers —— 工作流 skill 集**
+
+提供 brainstorming（需求澄清）、writing-plans（方案落地）、verification-before-completion（交付前验证）等流程 skill，补上 proto-gen 不覆盖的「想清楚」与「验收」两端。
+
+```
+/plugin install superpowers@claude-plugins-official
+```
+
+`claude-plugins-official` 是 Claude Code 默认已注册的官方市场，无需先 add。装完重启会话生效。检测方式：看 skill 列表里有没有 `superpowers:brainstorming`。
+
+**3. prototype-reviewer —— 原型评审员（本 skill 自带）**
+
+`agents/prototype-reviewer.md` 是随本 skill 分发的只读 subagent。拷到项目里即可调用：
+
+```bash
+mkdir -p .claude/agents
+cp ~/.claude/skills/proto-gen/agents/prototype-reviewer.md .claude/agents/
+```
+
+规则单一源是 [`references/review-checklist.md`](references/review-checklist.md)，agent 文件只是薄壳。项目有特化规则（自有主题 token、外壳结构、版本命名）就在项目的那份里叠加，不要回写本 skill。
+
+## 第一次用：先定设计系统来源
+
+**首次在一个新项目里生成原型前**，先判定主题从哪来。用户没交代就问一句，问完立刻开工——**不要因为「还没有设计系统」就停下**。
+
+| 用户的处境 | 怎么办 |
+|---|---|
+| **完全没有设计系统**（多数首次使用者） | 直接用自带的默认主题开工，**这是默认选择**，不用问第二遍 |
+| **有品牌色 / 视觉倾向，但没成体系** | 去 [tweakcn](https://tweakcn.com) 挑一个接近的主题（或在线调一个），拿 URL 跑 `assets/extract-theme.sh <url>`，再补下面 3 项 |
+| **已有产品代码**（shadcn 项目） | 从项目 `src/index.css` / `app/globals.css` 抽 shadcn token 覆盖 `theme.css`，按 [`references/shadcn-tweakcn-theme.md`](references/shadcn-tweakcn-theme.md) 接入 |
+
+**为什么可以先不管设计系统**：主题是可插拔的——`theme.css` 是唯一 token 源，`shared.css` 全部 `var()` 引用它。哪天定下品牌色，跑一次 `extract-theme.sh` + `inject-assets.mjs`，**已生成的所有原型自动换皮**，不用回头改任何一张图。先出图沟通产品逻辑，比先纠结色号更要紧。
+
+换过主题的话，tweakcn 只给 19 个核心 token，下面 3 项它不给、脚本会留 TODO 占位，**必须补**（细节见 [`references/default-theme.md`](references/default-theme.md)）：
+
+1. **sidebar 子 token（8 个）** —— 不补的话侧边栏激活态颜色会错
+2. **状态色派生（success / warning / info 各 4 个）** —— 不补的话 badge / 提示条没颜色
+3. **字体确认** —— 非 Google Fonts 来源要手工改 `theme.css` 头部 `@import`
+
 ## 设备系列
 
 | 系列 | 状态 | 外壳容器 | 适用 reference |
@@ -64,7 +119,7 @@ description: >
 
 本 skill 自带一套**主题可插拔**的设计系统：
 
-- `assets/theme.css` — **主题 token 单一来源**（19 个 shadcn 核心 + 8 个 sidebar 子 token + 12 个状态色派生 + 字体 CDN）。默认 = tweakcn 724-1，可通过 `extract-theme.sh` 切换
+- `assets/theme.css` — **主题 token 单一来源**（19 个 shadcn 核心 + 8 个 sidebar 子 token + 12 个状态色派生 + 字体 CDN）。默认 = tweakcn violet，可通过 `extract-theme.sh` 切换
 - `assets/shared.css` — 组件类骨架（按钮 / 卡片 / 弹窗 / 表单 / PRD 面板等）；所有颜色 / 字体 / 圆角通过 `var()` 引用 `theme.css` 的 token
 - `assets/components.html` — **人类可视组件清单**（核心交付物）：每个组件含 类名 / 常态 / hover / 禁用 / loading 四态横排 + 应用场景 + Token 速查；产品 / 测试 / AI 浏览器双击查阅
 - `assets/extract-theme.sh` — 主题切换脚本：`./extract-theme.sh <tweakcn-url-or-id>` 一键覆盖 `theme.css`
@@ -112,10 +167,11 @@ description: >
 |---|---|---|
 | `references/html-structure.md` | 页面骨架 + 三种叠加态（modal / drawer / subpage） | PC · macOS 系列 |
 | `references/css-components.md` | **类名 → 用途 → components.html 锚点** 索引表；不再含 hex / px 等具体值 | PC · macOS 系列 |
-| `references/default-theme.md` | proto-gen 默认主题（724-1）说明 + 切换流程 + token 全表 + 切换后必须手工补的 3 项 | 设备无关 |
+| `references/default-theme.md` | proto-gen 默认主题（violet）说明 + 切换流程 + token 全表 + 切换后必须手工补的 3 项 | 设备无关 |
 | `references/shadcn-tweakcn-theme.md` | **目标项目接入**：当原型要对齐业务项目自身主题时如何覆盖 `theme.css`（sidebar 子 token 陷阱 / 状态色派生 / 字体大小映射 / lucide 踩坑 / 自检清单） | 设备无关；项目接入场景 |
 | `references/prd-rules.md` | PRD bullets 写法、元素描述模板、重复内容引用规则 | 设备无关 |
 | `references/prd-highlight.md` | PRD ↔ 原型 双向 hover 联动：`data-comp` / `data-target` 命名约定 / scope / 交付剥离须知 | 设备无关 |
+| `references/review-checklist.md` | **评审清单**：组件复用 / 基于最新原型迭代 / 结构契约 / PRD 面板 / 风格沉淀建议输出格式 | 设备无关 |
 
 ## 工作目录
 
@@ -179,6 +235,18 @@ description: >
 ~/.claude/skills/proto-gen/assets/inject-assets.mjs {user-dir}/{filename}.html
 ```
 
+### 6. 生成后评审
+
+原型生成或大改后，跑一次 `prototype-reviewer` 拿到批量问题清单，一次性修完再交付——不要逐条发现、逐条改。
+
+```
+用 prototype-reviewer 审查 {user-dir}/{filename}.html
+```
+
+审查规则见 [`references/review-checklist.md`](references/review-checklist.md)。项目未拷 agent 文件时，直接对照该清单自查也可以。
+
+评审输出末尾的「风格沉淀建议」段是给人看的：本轮新增的组件模式、尚未固化的重复写法、项目规范里已过期的条目。**由用户确认后再落笔**写进设计文档或 `shared.css`，评审本身不改任何文件。
+
 ## 输出文件
 
 - **HTML 原型**：`{user-dir}/{name}.html`（包含全部 sections，自包含单文件，token / 通用组件样式由注入脚本回填）
@@ -186,9 +254,10 @@ description: >
 
 ## 验证
 
-生成后检查：
+交付前自查（完整清单见 [`references/review-checklist.md`](references/review-checklist.md)）：
 
 1. HTML 文件可在浏览器直接打开（自包含，无本地文件依赖）；三对 `@proto-gen` 标记块均已由脚本回填、无空块
 2. 各 section 都有 `toc-sidebar` 对应入口
 3. `prd-panel` 内容与 UI 元素一一对应
 4. 没有使用 `references/css-components.md` 中未列出的自造类名
+5. 通用区域与同目录最新一份原型视觉一致

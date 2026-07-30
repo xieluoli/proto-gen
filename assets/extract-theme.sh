@@ -10,7 +10,7 @@
 # 输出：theme.css（含 19 个 shadcn 核心 token + 字体声明）
 # 警告：
 #   ① Sidebar 子 token（8 个 hsl）tweakcn 不提供，本脚本填占位提示，
-#      必须手工从目标项目 src/_app/index.css（或 globals.css）抽真值覆盖。
+#      必须手工从目标项目 src/index.css（或 app/globals.css）抽真值覆盖。
 #   ② 状态色派生（success/warning/info 各 -muted/-border/-foreground 共 12 个）同上需补。
 #   ③ 字体 family 需匹配 tweakcn 主题给的 font-sans / font-mono；
 #      本脚本读 cssVars.theme.light.font-sans / font-mono 字段，未给时回退 Inter / JetBrains Mono。
@@ -96,7 +96,7 @@ cat > "$OUTPUT" <<EOF
  * 由 extract-theme.sh 生成，勿手改；切换主题请重跑脚本。
  *
  * ⚠ Sidebar 子 token + 状态色派生 tweakcn 不给，请手工补：
- *   1. 从目标项目 src/_app/index.css（或 globals.css）抽 --sidebar-* 8 个
+ *   1. 从目标项目 src/index.css（或 app/globals.css）抽 --sidebar-* 8 个
  *   2. 状态色按 PR 真值覆盖 --success/--warning/--info 三套 12 个
  */
 
@@ -126,7 +126,7 @@ cat > "$OUTPUT" <<EOF
   --ring: ${RING};
   --radius: ${RADIUS};
 
-  /* === Sidebar 子 token（占位，须从项目 _app/index.css 抽真值） === */
+  /* === Sidebar 子 token（占位，须从项目 src/index.css 抽真值） === */
   --sidebar: var(--background);                       /* TODO 补 */
   --sidebar-foreground: var(--foreground);            /* TODO 补 */
   --sidebar-primary: var(--primary);                  /* TODO 补 */
@@ -136,7 +136,7 @@ cat > "$OUTPUT" <<EOF
   --sidebar-border: var(--border);
   --sidebar-ring: var(--ring);
 
-  /* === 状态色派生（占位，按项目 PR _app/index.css 真值补） === */
+  /* === 状态色派生（占位，按项目主题文件真值补） === */
   --success: hsl(158 64% 41%);
   --success-foreground: hsl(0 0% 100%);
   --success-muted: hsl(152 81% 96%);
@@ -179,6 +179,6 @@ EOF
 echo "✓ Wrote ${OUTPUT}"
 echo
 echo "⚠ 待手工补："
-echo "  ① --sidebar-* 8 个 token（从项目 _app/index.css 抽）"
+echo "  ① --sidebar-* 8 个 token（从项目 src/index.css 抽）"
 echo "  ② 状态色真值（如项目有定制 success/warning/info HSL）"
 echo "  ③ 字体确认：${FONT_SANS_FAMILY} / ${FONT_MONO_FAMILY}"

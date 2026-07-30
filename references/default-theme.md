@@ -1,4 +1,4 @@
-# proto-gen 默认主题（724-1）
+# proto-gen 默认主题（violet）
 
 proto-gen 默认主题装在 `assets/theme.css`，所有原型 HTML 通过 `<link rel="stylesheet" href="theme.css">` 引用。换主题 = 重写 `theme.css`，本目录下所有原型自动跟随，无需逐文件改。
 
@@ -6,13 +6,12 @@ proto-gen 默认主题装在 `assets/theme.css`，所有原型 HTML 通过 `<lin
 
 | 维度 | 值 |
 |---|---|
-| 主题 ID | `cmpm3t0xk000104jq47h88i1g`（tweakcn 标识：**724-1**） |
+| 主题 ID | `cmpm3t0xk000104jq47h88i1g`（tweakcn 标识：**violet**） |
 | tweakcn URL | `https://tweakcn.com/themes/cmpm3t0xk000104jq47h88i1g` |
 | 主色 | `oklch(0.5554 0.2460 273.0245)`（紫） |
 | 圆角 `--radius` | `1.3rem` |
 | 字体 sans | Google Sans Flex |
 | 字体 mono | IBM Plex Mono |
-| 来源项目 | 724AIManager（dev 副本 v0.0.3 ai-store.html 已实测对齐） |
 
 可视效果直接打开 `assets/components.html`（Token 速查段会实时显示当前 `theme.css` 注入的真值）。
 
@@ -57,7 +56,7 @@ tweakcn 只提供 19 个核心 token，下面这些不给，脚本会写占位 +
 --sidebar-ring
 ```
 
-来源：目标项目 `src/_app/index.css` 或 `globals.css`（shadcn init 时写入）。**不要** fallback 到 `var(--muted)` / `var(--foreground)` —— 激活态会错。
+来源：目标项目 `src/index.css` 或 `globals.css`（shadcn init 时写入）。**不要** fallback 到 `var(--muted)` / `var(--foreground)` —— 激活态会错。
 
 详细规则与陷阱见 [`shadcn-tweakcn-theme.md`](./shadcn-tweakcn-theme.md)。
 
@@ -69,7 +68,7 @@ tweakcn 只提供 19 个核心 token，下面这些不给，脚本会写占位 +
 --info    / --info-foreground    / --info-muted    / --info-border
 ```
 
-脚本默认填了一组通用 HSL 真值（绿 / 橙 / 主色）；目标项目若有定制（如绿色饱和度不同）按项目 `_app/index.css` 覆盖。
+脚本默认填了一组通用 HSL 真值（绿 / 橙 / 主色）；目标项目若有定制（如绿色饱和度不同）按项目主题文件覆盖。
 
 `--info` 通常 = `var(--primary)` —— shadcn 习惯。
 
@@ -80,7 +79,7 @@ tweakcn 只提供 19 个核心 token，下面这些不给，脚本会写占位 +
 - tweakcn 主题没显式给字体 → 回退 `Inter / JetBrains Mono`
 - 项目用了非 Google Fonts 来源（Fontshare / 自托管）→ 手工改 `theme.css` 头部 `@import` 行
 
-## token 完整清单（默认 724-1 真值）
+## token 完整清单（默认 violet 真值）
 
 | 类别 | Token | 值 |
 |---|---|---|

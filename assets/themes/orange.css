@@ -1,0 +1,91 @@
+/*
+ * proto-gen 主题：orange（浅色营销风，适合官网 / 落地页 / 插件）
+ * 结构骨架照默认主题 violet（tweakcn cmpm3t0xk000104jq47h88i1g）
+ * 结构与默认主题一致，token 名相同，可直接替换 theme.css 使用
+ *
+ * 用法：AI 翻译系原型/UI 用本文件替代默认 theme.css（token 名一致、var() 直接可用）。
+ * 基调：浅色营销风 · 品牌橙克制（仅主 CTA / 高亮卡 / Best 标签）· hairline · 无阴影 · rounded · Mulish
+ * 维护：由 Designer 角色维护；改值优先对齐官网 globals.css，保持两处同源。
+ */
+
+/* === 字体 CDN（Mulish 正文 + IBM Plex Mono 数字） === */
+@import url('https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  /* === 19 个 shadcn 核心 token（HSL 完整值，取自官网 globals.css） === */
+  --background: hsl(0 0% 100%);            /* 页面白底 */
+  --foreground: hsl(222 47% 11%);          /* 主文字 slate-900；也用作深色主按钮底 */
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(222 47% 11%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(222 47% 11%);
+  --primary: hsl(24 95% 53%);              /* 品牌橙 #f97316（仅主 CTA / PRO 卡 / Best 标签） */
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(210 40% 96%);
+  --secondary-foreground: hsl(222 47% 11%);
+  --muted: hsl(210 40% 96%);               /* 浅灰底 slate-100 */
+  --muted-foreground: hsl(215 16% 47%);    /* 次级文字 slate-500 */
+  --accent: hsl(24 95% 96%);               /* 品牌橙极浅底 */
+  --accent-foreground: hsl(24 90% 40%);
+  --destructive: hsl(0 72% 51%);
+  --destructive-foreground: hsl(0 0% 98%);
+  --border: hsl(220 16% 90%);              /* 冷淡 hairline 细线 */
+  --input: hsl(220 16% 90%);
+  --ring: hsl(24 95% 53%);
+  --radius: 0.625rem;
+
+  /* === Sidebar 子 token（官网为营销站无侧栏，按中性 + 橙主色派生） === */
+  --sidebar: hsl(0 0% 100%);
+  --sidebar-foreground: hsl(222 47% 11%);
+  --sidebar-primary: hsl(24 95% 53%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(210 40% 96%);
+  --sidebar-accent-foreground: hsl(222 47% 11%);
+  --sidebar-border: hsl(220 16% 90%);
+  --sidebar-ring: hsl(24 95% 53%);
+
+  /* === 状态色派生（营销风：success 绿 / warning 琥珀避让品牌橙 / info 沿用品牌橙） === */
+  --success: hsl(142 71% 45%);
+  --success-foreground: hsl(0 0% 100%);
+  --success-muted: hsl(142 76% 96%);
+  --success-border: hsl(142 69% 78%);
+
+  --warning: hsl(38 92% 50%);
+  --warning-foreground: hsl(0 0% 100%);
+  --warning-muted: hsl(48 96% 95%);
+  --warning-border: hsl(45 93% 76%);
+
+  /* info 系列 = primary 系列（结构照 violet） */
+  --info: var(--primary);
+  --info-foreground: var(--primary-foreground);
+  --info-muted: hsl(24 95% 96%);
+  --info-border: hsl(24 90% 88%);
+
+  /* === 字体 === */
+  --font-sans: 'Mulish', ui-sans-serif, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+
+  /* === proto-gen 兼容别名（软迁移，逐步淘汰） === */
+  --bg: var(--background);
+  --surface: var(--card);
+  --text: var(--foreground);
+  --text-2: color-mix(in oklch, var(--muted-foreground) 65%, transparent);
+  --text-3: color-mix(in oklch, var(--muted-foreground) 45%, transparent);
+  --border-2: color-mix(in oklch, var(--border) 70%, var(--foreground));
+  --primary-hover: color-mix(in oklch, var(--primary) 88%, black);
+  --primary-light: color-mix(in oklch, var(--primary) 10%, transparent);
+  --error: var(--destructive);
+
+  /* radius 阶梯（营销风小圆角，--radius = 0.625rem / 10px 基准）
+       chip  ≈ 4px  — menu/dropdown option、嵌套小子项
+       sm/btn/panel ≈ 8px — button / input / select / 小面板
+       card  ≈ 12px — 卡片 / Dialog 整块（rounded-xl 观感）
+       full  = 9999 — pill / 头像 / badge 胶囊 */
+  --radius-chip:  4px;
+  --radius-sm:    calc(var(--radius) - 2px);
+  --radius-btn:   calc(var(--radius) - 2px);
+  --radius-panel: calc(var(--radius) - 2px);
+  --radius-card:  calc(var(--radius) + 2px);
+  --radius-full:  9999px;
+}
+</content>

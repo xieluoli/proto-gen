@@ -46,7 +46,7 @@ body {
   gap: 12px; flex-shrink: 0;
 }
 
-/* macOS window：默认 1460×910（对齐 724AIManager 等 PC 应用规范，参 references/shadcn-tweakcn-theme.md） */
+/* macOS window：默认 1460×910（对齐常见 PC 桌面应用窗口尺寸，参 references/shadcn-tweakcn-theme.md） */
 .macos-window {
   width: 1460px; max-width: 100%;
   height: 910px;

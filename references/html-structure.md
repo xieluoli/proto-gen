@@ -43,7 +43,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>{页面名} · 原型</title>
-<link rel="stylesheet" href="theme.css" />         <!-- 主题 token + 字体 CDN（默认 724-1，可通过 extract-theme.sh 切换） -->
+<link rel="stylesheet" href="theme.css" />         <!-- 主题 token + 字体 CDN（默认 violet，可通过 extract-theme.sh 切换） -->
 <link rel="stylesheet" href="shared.css" />        <!-- 组件类骨架 -->
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>

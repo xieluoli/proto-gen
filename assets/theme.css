@@ -1,5 +1,5 @@
 /*
- * proto-gen 默认主题：724-1
+ * proto-gen 默认主题：violet
  * tweakcn: https://tweakcn.com/themes/cmpm3t0xk000104jq47h88i1g
  *
  * 切换主题：./assets/extract-theme.sh <new-tweakcn-url-or-id>
@@ -32,7 +32,7 @@
   --ring: oklch(0.6081 0.2114 266.2130);
   --radius: 1.3rem;
 
-  /* === Sidebar 子 token（HSL，tweakcn 不给，须从项目 _app/index.css 抽） === */
+  /* === Sidebar 子 token（HSL，tweakcn 不给，须从项目 src/index.css 抽） === */
   --sidebar: hsl(228 100% 98.04%);
   --sidebar-foreground: hsl(244.44 27.84% 19.02%);
   --sidebar-primary: hsl(237.30 100% 65.10%);
@@ -42,7 +42,7 @@
   --sidebar-border: hsl(216 43.48% 90.98%);
   --sidebar-ring: hsl(225 100% 63.92%);
 
-  /* === 状态色派生（HSL，tweakcn 不给，按 PR1 _app/index.css 真值） === */
+  /* === 状态色派生（HSL，tweakcn 不给，按项目主题文件真值） === */
   --success: hsl(158.11 64.37% 40.98%);
   --success-foreground: hsl(0 0% 100%);
   --success-muted: hsl(151.76 81% 95.88%);
@@ -53,7 +53,7 @@
   --warning-muted: hsl(36.52 92% 95.10%);
   --warning-border: hsl(48 96.49% 76.67%);
 
-  /* info 系列 = primary 系列（PR1 写法：--info: var(--primary)）*/
+  /* info 系列 = primary 系列（shadcn 惯例：--info: var(--primary)）*/
   --info: var(--primary);
   --info-foreground: var(--primary-foreground);
   --info-muted: hsl(234.19 100% 96.47%);

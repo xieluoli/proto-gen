@@ -21,7 +21,7 @@
 
 | 资产 | 作用 |
 |---|---|
-| [`assets/theme.css`](assets/theme.css) | tweakcn 主题 token 单一来源（19 核心 + 8 sidebar + 12 状态色 + 字体 CDN）。默认 724-1 紫，**换主题改这一份** |
+| [`assets/theme.css`](assets/theme.css) | tweakcn 主题 token 单一来源（19 核心 + 8 sidebar + 12 状态色 + 字体 CDN）。默认 violet 紫，**换主题改这一份** |
 | [`assets/shared.css`](assets/shared.css) | 组件类骨架（按钮 / 卡片 / 弹窗 / sidebar / PRD 面板等）。颜色/字体/圆角全部 var() 引用 theme.css，主题切换自动跟随 |
 | [`assets/components.html`](assets/components.html) | **人类可视组件库**：24 个通用组件含常态/hover/禁用/loading 四态横排 + Token 速查；写需求时直接说"展示主按钮（应用 .btn-primary 风格）"，不再描述具体颜色字号 |
 | [`assets/prd-highlight.js`](assets/prd-highlight.js) | PRD ↔ 原型 双向 hover 联动运行时 |
@@ -37,7 +37,32 @@
 git clone git@github.com:xieluoli/proto-gen.git ~/.claude/skills/proto-gen
 ```
 
-Claude Code 启动时会自动加载所有 `~/.claude/skills/*` 下的 skill。
+Claude Code 启动时会自动加载所有 `~/.claude/skills/*` 下的 skill。**不需要**往项目里拷任何 css / js——生成的 HTML 是自包含单文件，样式由注入脚本回填（见下文「样式怎么进到 HTML 里」）。
+
+### 可选前置依赖
+
+不装也能用，装了链条更完整：
+
+| 依赖 | 补什么 | 装法 |
+|---|---|---|
+| [OpenSpec](https://github.com/Fission-AI/OpenSpec) | 需求文档骨架，让原型挂在一份变更提案下，改了什么、为什么改可追溯 | `npm i -g @fission-ai/openspec` → 项目根跑 `openspec init` |
+| [superpowers](https://github.com/anthropics/claude-plugins-official) | brainstorming / writing-plans / verification 等流程 skill，补上「想清楚」与「验收」两端 | Claude Code 里跑 `/plugin install superpowers@claude-plugins-official` |
+
+装了 OpenSpec 后，原型建议放在 `openspec/changes/<change-name>/prototypes/`，与该变更的 proposal.md / spec.md 同级。
+
+## 还没有设计系统？直接开工
+
+**这是绝大多数人第一次用它时的情况，不影响出图。** proto-gen 自带一整套可用的设计系统（默认 violet 紫主题 + 24 个组件），装完就能生成原型，不需要你先有品牌色、色板或组件库。
+
+主题是**可插拔**的：`theme.css` 是唯一的 token 源，`shared.css` 里所有颜色 / 字体 / 圆角都 `var()` 引用它。所以路径是这样的——
+
+| 你的处境 | 怎么走 |
+|---|---|
+| **完全没有设计系统** | 什么都不用做，用默认主题开工。等品牌定下来再换，**已经画好的原型会自动跟着变** |
+| **有品牌色，但没成体系** | 去 [tweakcn](https://tweakcn.com) 挑一个接近的主题（或在线调色导出），把 URL 交给下面的换肤脚本 |
+| **已有产品代码**（用过 `shadcn init`） | 从项目 `src/index.css` / `app/globals.css` 抽 token 覆盖 `theme.css`，见 [`references/shadcn-tweakcn-theme.md`](references/shadcn-tweakcn-theme.md) |
+
+先出图沟通产品逻辑，比先纠结色号要紧得多——换皮的操作见下文[「换主题」](#换主题业务定制)，两条命令。
 
 ## 使用
 
@@ -51,36 +76,58 @@ Claude Code 启动时会自动加载所有 `~/.claude/skills/*` 下的 skill。
 
 触发关键词（在你的指令里包含其中一个就行）：生成原型、新建原型、写原型、画原型、做个原型、出个原型、新增一个 html、新建 html 原型。
 
-第一次使用时，把**四件套**拷到你项目的原型目录下，生成的 HTML 通过相对路径引用：
+再告诉 Claude 放哪，比如 "放到 `your-project/prototypes/` 下"。
+
+### 样式怎么进到 HTML 里
+
+原型要**自包含**（研发和评审拿到单文件双击就能开），但 token 和通用组件样式**只维护一份**——在本 skill 的 `assets/` 下。两者靠注入脚本连接：生成的 HTML 头部带一组 `@proto-gen` 标记注释，脚本把 `theme.css` / `shared.css` / `prd-highlight.js` 的最新内容填进标记之间。
 
 ```bash
-mkdir -p your-project/prototypes
-cp ~/.claude/skills/proto-gen/assets/theme.css         your-project/prototypes/
-cp ~/.claude/skills/proto-gen/assets/shared.css        your-project/prototypes/
-cp ~/.claude/skills/proto-gen/assets/components.html   your-project/prototypes/
-cp ~/.claude/skills/proto-gen/assets/prd-highlight.js  your-project/prototypes/
+# 单文件或整个目录（递归收集 *.html）都行，幂等，可反复跑
+~/.claude/skills/proto-gen/assets/inject-assets.mjs your-project/prototypes/
 ```
 
-原型 HTML 头部按顺序引入：
+改完主题或组件样式，跑一次这条命令，**所有原型统一换皮**。页面自有样式写在标记块之外，注入不会碰。
 
-```html
-<link rel="stylesheet" href="theme.css" />
-<link rel="stylesheet" href="shared.css" />
-<script src="prd-highlight.js" defer></script>
+## 评审
+
+原型生成或大改后，跑一次评审拿批量问题清单，一次性修完再交付：
+
+```bash
+mkdir -p .claude/agents
+cp ~/.claude/skills/proto-gen/agents/prototype-reviewer.md .claude/agents/
 ```
 
-之后告诉 Claude "把生成的 HTML 放到 `your-project/prototypes/` 下" 即可。
+然后在 Claude Code 里说 "用 prototype-reviewer 审查 xxx.html"。它只读、不改文件，产出分段问题清单：
+
+- **组件复用** —— 有没有自造已存在的类名、有没有重复 3 次该抽母版的片段
+- **基于最新原型迭代** —— 有没有从旧版本起步、通用区域是否与最近一份产出对齐
+- **结构契约 / PRD 面板 / 脚手架剥离**
+- **风格沉淀建议** —— 本轮值得固化的组件模式、尚未沉淀的重复写法、项目规范里已过期的条目
+
+最后一段是给人看的：**确认后再落笔**写进设计文档，评审本身不动任何文件。完整规则见 [`references/review-checklist.md`](references/review-checklist.md)；项目有自己的主题 token / 外壳结构约定，就在项目那份 agent 文件里叠加特化规则。
 
 ## 换主题（业务定制）
 
-默认主题是 **724-1**（tweakcn 紫调）。换其他主题只要给一个 tweakcn URL：
+默认主题是 **violet**（tweakcn 紫调）。换其他主题只要给一个 tweakcn URL，两条命令：
 
 ```bash
-cd ~/.claude/skills/proto-gen/assets
-./extract-theme.sh https://tweakcn.com/themes/<your-theme-id>
+# 1. 换 token（抽 tweakcn JSON 的 19 个 shadcn 核心 token 覆盖 theme.css）
+~/.claude/skills/proto-gen/assets/extract-theme.sh https://tweakcn.com/themes/<your-theme-id>
+
+# 2. 刷进已有原型（不跑这步，已生成的自包含 HTML 不会变）
+~/.claude/skills/proto-gen/assets/inject-assets.mjs your-project/prototypes/
 ```
 
-脚本会抽 tweakcn JSON 的 19 个 shadcn 核心 token 覆盖 `theme.css`，**本目录所有原型自动换皮**。sidebar 子 token + 状态色派生 tweakcn 不给（脚本会留 TODO 占位），切换主题后须按目标项目 `_app/index.css` 补齐——详见 [`references/default-theme.md`](references/default-theme.md) 切换流程 + [`references/shadcn-tweakcn-theme.md`](references/shadcn-tweakcn-theme.md) 接入陷阱。
+⚠️ tweakcn 只给 19 个核心 token，下面 **3 项它不给**，脚本会留 TODO 占位，**必须补**，否则有可见问题：
+
+| 要补的 | 不补的后果 |
+|---|---|
+| sidebar 子 token（8 个） | 侧边栏激活态背景 / 文字色错 |
+| 状态色派生（success / warning / info 各 4 个） | badge、提示条没颜色 |
+| 字体确认 | 非 Google Fonts 来源需手工改 `theme.css` 头部 `@import` |
+
+补法详见 [`references/default-theme.md`](references/default-theme.md)（切换流程）+ [`references/shadcn-tweakcn-theme.md`](references/shadcn-tweakcn-theme.md)（接入陷阱）。
 
 ## 查组件视觉规范
 
@@ -102,28 +149,32 @@ cd ~/.claude/skills/proto-gen/assets
 ```
 proto-gen/
 ├── SKILL.md                              skill 入口（Claude Code 加载）
+├── agents/
+│   └── prototype-reviewer.md             原型评审 subagent（拷到项目 .claude/agents/ 使用）
 ├── assets/
-│   ├── theme.css                         主题 token 单一来源（默认 724-1，可换）
+│   ├── theme.css                         主题 token 单一来源（默认 violet，可换）
 │   ├── shared.css                        组件类骨架（全部 var() 引用 theme.css）
 │   ├── components.html                   人类可视组件库（24 个通用组件四态展示）
 │   ├── extract-theme.sh                  tweakcn 主题切换脚本
+│   ├── inject-assets.mjs                 样式注入脚本（assets 单一源 → 自包含 HTML）
 │   ├── prd-highlight.js                  PRD ↔ 原型 双向 hover 联动
 │   ├── example.html                      独立可运行示例
 │   └── screenshots/                      example 渲染截图（README 用）
 ├── references/
 │   ├── html-structure.md                 HTML 骨架 + modal/drawer/subpage 三态决策（PC·macOS）
 │   ├── css-components.md                 类名 → 用途 → components.html 锚点 索引表 + 业务衍生类
-│   ├── default-theme.md                  proto-gen 默认主题（724-1）+ 切换流程 + 圆角阶梯速查 + 装饰例外
+│   ├── default-theme.md                  proto-gen 默认主题（violet）+ 切换流程 + 圆角阶梯速查 + 装饰例外
 │   ├── shadcn-tweakcn-theme.md           目标项目接入指引（sidebar 子 token 陷阱 / 字体大小映射 / lucide 踩坑）
 │   ├── prd-rules.md                      PRD bullets 写法 + 重复引用规则 + 产品语言禁代码语言
-│   └── prd-highlight.md                  data-comp / data-target 命名约定 + 交付剥离须知
+│   ├── prd-highlight.md                  data-comp / data-target 命名约定 + 交付剥离须知
+│   └── review-checklist.md               评审清单（组件复用 / 基于最新迭代 / 风格沉淀），prototype-reviewer 的规则源
 └── evals/
     └── evals.json                        测试用例（可选）
 ```
 
 ## 设计系统速览
 
-默认主题 [724-1](https://tweakcn.com/themes/cmpm3t0xk000104jq47h88i1g)（可换）：
+默认主题 [violet](https://tweakcn.com/themes/cmpm3t0xk000104jq47h88i1g)（可换）：
 
 | 维度 | 默认值 |
 |---|---|

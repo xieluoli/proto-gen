@@ -1,6 +1,6 @@
 # 项目接入：对齐业务项目自身的 shadcn / tweakcn 主题
 
-> 本文件是「**目标项目接入**」指引——当原型要严格对齐某个**业务项目自身的主题**（如 724AIManager 的 `_app/index.css`），按本文件覆盖 `theme.css` 中 tweakcn 不给的子 token；
+> 本文件是「**目标项目接入**」指引——当原型要严格对齐某个**业务项目自身的主题**（项目自己的 `index.css` / `globals.css`），按本文件覆盖 `theme.css` 中 tweakcn 不给的子 token；
 > 如果只是用 proto-gen 默认主题，看 [`default-theme.md`](./default-theme.md) 即可，无需读本文件。
 
 ## 何时启用本规范
@@ -8,8 +8,8 @@
 满足以下任一条件：
 
 - 项目代码用 `npx shadcn@latest init` 初始化过
-- 项目 `_app/index.css` 或 `globals.css` 用 HSL/OKLCH 定义 `--background --foreground --primary` 等 shadcn 变量
-- 用户提到「按这个项目的主题做原型」 / 「对齐到 src/_app/index.css」
+- 项目 `src/index.css` 或 `app/globals.css` 用 HSL/OKLCH 定义 `--background --foreground --primary` 等 shadcn 变量
+- 用户提到「按这个项目的主题做原型」 / 「对齐到 src/index.css」
 - 需要原型在产品评审 / PR review 时与项目实施视觉对齐
 
 不在范围：纯用 proto-gen 默认主题做新业务原型（看 `default-theme.md`）。
@@ -18,8 +18,8 @@
 
 ```
 1. 跑 extract-theme.sh <tweakcn-url>  →  生成 theme.css 含 19 核心 token
-2. 从项目 _app/index.css 抽 sidebar 子 token  →  覆盖 theme.css 对应段
-3. 从项目 _app/index.css 抽状态色派生（如有定制）  →  覆盖 theme.css 对应段
+2. 从项目 src/index.css 抽 sidebar 子 token  →  覆盖 theme.css 对应段
+3. 从项目 src/index.css 抽状态色派生（如有定制）  →  覆盖 theme.css 对应段
 4. 字体确认（Google Fonts 引入 / 自托管覆盖 @import）
 5. 字体大小逐处对照「字体大小映射表」（见末尾）核对 PR 实施层
 ```
@@ -28,9 +28,9 @@
 
 tweakcn 主题 **不会** 给 `--sidebar / --sidebar-accent / --sidebar-accent-foreground / --sidebar-border / --sidebar-ring` 等 sidebar 子 token。
 
-shadcn 自带的 sidebar 子 token 在项目 `_app/index.css` 或 `globals.css` 由 shadcn 初始化模板写入，**与 tweakcn 主色不一定一致**。**必须**从项目源码读取真实的 sidebar token 注入 `theme.css`，不能 fallback 到 `var(--muted)` / `var(--foreground)`，否则激活态背景/文字色会错。
+shadcn 自带的 sidebar 子 token 在项目 `src/index.css` 或 `app/globals.css` 由 shadcn 初始化模板写入，**与 tweakcn 主色不一定一致**。**必须**从项目源码读取真实的 sidebar token 注入 `theme.css`，不能 fallback 到 `var(--muted)` / `var(--foreground)`，否则激活态背景/文字色会错。
 
-示例（来自 724AIManager `src/_app/index.css`）：
+示例（某 shadcn 项目 `src/index.css` 中的 sidebar 段）：
 
 ```css
 --sidebar: hsl(228 100% 98.04%);
@@ -45,7 +45,7 @@ shadcn 自带的 sidebar 子 token 在项目 `_app/index.css` 或 `globals.css` 
 
 ## ② 状态色派生（success / warning / info）
 
-tweakcn 不给。从项目 `_app/index.css` 读取（PR 实施层真值）。若项目也没显式给，按 shadcn 惯例 HSL：
+tweakcn 不给。从项目主题文件读取（实施层真值）。若项目也没显式给，按 shadcn 惯例 HSL：
 
 ```css
 --success: hsl(158.11 64.37% 40.98%);
@@ -93,7 +93,7 @@ lg: var(--radius)               // 大型容器
 xl: calc(var(--radius) + 4px)   // Card 默认（CardHeader/CardContent 整块）
 ```
 
-⚠️ **常见陷阱**：项目 `tailwind.config.cjs` 可能把 borderRadius 硬写成固定 px（如 724AI: sm/md/lg/xl = 6/8/12/14 px）——这是**实施层对设计规范的偏离**，原型**不要**跟随该偏差。原型严格按 tweakcn 主题渲染，PR review 时把 tailwind 偏差作为一项缺陷指出。
+⚠️ **常见陷阱**：项目 `tailwind.config.cjs` 可能把 borderRadius 硬写成固定 px（如 sm/md/lg/xl 被写死成 6/8/12/14 px）——这是**实施层对设计规范的偏离**，原型**不要**跟随该偏差。原型严格按 tweakcn 主题渲染，PR review 时把 tailwind 偏差作为一项缺陷指出。
 
 **装饰例外**：小型品牌图标 tile（BrandIcon 44px / 卡片 32–36px brand-icon / kbd / scrollbar / 状态栏圆点）用固定 4–6 px，**不走 shadcn 阶梯**——避免 44px 块挤进 ~19px 圆角时视觉过分圆润。判断标准：该元素是 shadcn 原语（Button/Input/Card/Dialog/Sheet）则跟随阶梯；纯装饰则任意 4–6 px。
 
@@ -167,9 +167,9 @@ PRD 真实组件用 tailwind className 控制字号，原型 inline CSS 必须�
 
 | 项目 | tweakcn URL | 主色 | 圆角 radius | 字体 sans / mono |
 |---|---|---|---|---|
-| 724AIManager（proto-gen 默认） | `tweakcn.com/themes/cmpm3t0xk000104jq47h88i1g`（724-1） | `oklch(0.5554 0.246 273)` 紫 | `1.3rem` | Google Sans Flex / IBM Plex Mono |
+| proto-gen 默认（violet） | `tweakcn.com/themes/cmpm3t0xk000104jq47h88i1g` | `oklch(0.5554 0.246 273)` 紫 | `1.3rem` | Google Sans Flex / IBM Plex Mono |
 
-新项目接入时在表格追加一行，并配套从 `_app/index.css` 读 sidebar 子 token 同步记录到该项目 `theme.css`。
+新项目接入时在表格追加一行，并配套从该项目主题文件读 sidebar 子 token 同步记录到该项目 `theme.css`。
 
 ## 接入完成自检
 
