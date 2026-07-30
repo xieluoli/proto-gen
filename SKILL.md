@@ -167,8 +167,8 @@ cp ~/.claude/skills/proto-gen/agents/prototype-reviewer.md .claude/agents/
 |---|---|---|
 | `references/html-structure.md` | 页面骨架 + 三种叠加态（modal / drawer / subpage） | PC · macOS 系列 |
 | `references/css-components.md` | **类名 → 用途 → components.html 锚点** 索引表；不再含 hex / px 等具体值 | PC · macOS 系列 |
-| `references/default-theme.md` | proto-gen 默认主题（violet）说明 + 切换流程 + token 全表 + 切换后必须手工补的 3 项 | 设备无关 |
-| `references/shadcn-tweakcn-theme.md` | **目标项目接入**：当原型要对齐业务项目自身主题时如何覆盖 `theme.css`（sidebar 子 token 陷阱 / 状态色派生 / 字体大小映射 / lucide 踩坑 / 自检清单） | 设备无关；项目接入场景 |
+| `references/default-theme.md` | 默认主题（violet）说明 + 切换流程 + token 全表 + 必须手工补的 3 项；**圆角阶梯与装饰例外的单一源** | 设备无关 |
+| `references/shadcn-tweakcn-theme.md` | **对齐外部项目主题**：sidebar 子 token 陷阱 / 状态色真值 / tailwind 圆角映射 / 字体大小映射 / lucide 踩坑 / 自检清单 | 设备无关；项目接入场景 |
 | `references/prd-rules.md` | **每条 bullet 怎么写**：元素描述模板、重复内容引用规则、改动型只写增量、产品语言禁代码语言 | 设备无关 |
 | `references/prd-document.md` | **整篇 PRD 文档怎么组织**：章节骨架、框架 ASCII 树、配置表 + YAML、格式与命名约定 | 设备无关；需独立 PRD md 时 |
 | `references/prd-highlight.md` | PRD ↔ 原型 双向 hover 联动：`data-comp` / `data-target` 命名约定 / scope / 交付剥离须知 | 设备无关 |

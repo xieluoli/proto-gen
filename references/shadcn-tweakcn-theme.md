@@ -21,7 +21,7 @@
 2. 从项目 src/index.css 抽 sidebar 子 token  →  覆盖 theme.css 对应段
 3. 从项目 src/index.css 抽状态色派生（如有定制）  →  覆盖 theme.css 对应段
 4. 字体确认（Google Fonts 引入 / 自托管覆盖 @import）
-5. 字体大小逐处对照「字体大小映射表」（见末尾）核对 PR 实施层
+5. 字体大小逐处对照「字体大小映射表」（见末尾）核对项目实施层
 ```
 
 ## ① Sidebar 子 token —— **关键陷阱**
@@ -76,7 +76,7 @@ color: var(--<tone>);
 font-size: 12px; font-weight: 600;   /* 一律 font-semibold 加粗 */
 ```
 
-字重 600 是硬规范。PR 实施层若写成 medium (500) / normal (400) 视为偏差，原型不跟随。
+字重 600 是硬规范。项目实施层若写成 medium (500) / normal (400) 视为偏差，原型不跟随。
 
 例外：
 - 内容卡片 / 详情头部 badge **纯文字无 icon**（仅 detecting/installing 等代码态显式带 spinner 时原型才加 spinner）
@@ -95,7 +95,7 @@ xl: calc(var(--radius) + 4px)   // Card 默认（CardHeader/CardContent 整块�
 
 ⚠️ **常见陷阱**：项目 `tailwind.config.cjs` 可能把 borderRadius 硬写成固定 px（如 sm/md/lg/xl 被写死成 6/8/12/14 px）——这是**实施层对设计规范的偏离**，原型**不要**跟随该偏差。原型严格按 tweakcn 主题渲染，PR review 时把 tailwind 偏差作为一项缺陷指出。
 
-**装饰例外**：小型品牌图标 tile（BrandIcon 44px / 卡片 32–36px brand-icon / kbd / scrollbar / 状态栏圆点）用固定 4–6 px，**不走 shadcn 阶梯**——避免 44px 块挤进 ~19px 圆角时视觉过分圆润。判断标准：该元素是 shadcn 原语（Button/Input/Card/Dialog/Sheet）则跟随阶梯；纯装饰则任意 4–6 px。
+> 上表是 **tailwind 侧**的映射。proto-gen 自己的 `--radius-*` token 阶梯（chip / sm / btn / panel / card / full 六档）、写组件时的选档决策流程、以及不走阶梯的**装饰例外**清单，见 [`default-theme.md`](./default-theme.md#圆角阶梯速查写组件时严格按此查表)——那里是圆角规范的单一源，本节只管 tailwind 怎么对齐。
 
 ## ⑤ hover / focus 视觉规则
 
@@ -136,7 +136,7 @@ https://unpkg.com/@lobehub/icons-static-svg@latest/icons/<slug>-color.svg
 
 无对应 slug 时用 lucide icon + 紫色 tile（`background: color-mix(in oklch, var(--primary) 15%, transparent)`）兜底。
 
-## 字体大小映射表（PR 实施层精确对齐）
+## 字体大小映射表（与项目实施层精确对齐）
 
 PRD 真实组件用 tailwind className 控制字号，原型 inline CSS 必须精确对齐：
 
@@ -175,7 +175,7 @@ PRD 真实组件用 tailwind className 控制字号，原型 inline CSS 必须�
 
 - [ ] `theme.css` 19 个核心 token 全在 `:root`，颜色格式原样保留（OKLCH/HSL/RGB 不强制转换）
 - [ ] sidebar 子 token 从项目源码读，**不要** fallback（fallback 到 muted/foreground 是常见错误）
-- [ ] 状态色用项目 PR HSL 真值（success 绿 / warning 橙 / info=primary），不要 OKLCH 估值
+- [ ] 状态色用项目实施层 HSL 真值（success 绿 / warning 橙 / info=primary），不要 OKLCH 估值
 - [ ] `--muted-foreground` = `--foreground` 同值（次级文字靠 font-size + opacity 区分）
 - [ ] 字体 `@import` 引入 + body `font-family: var(--font-sans)`
 - [ ] 字体大小逐处对照「字体大小映射表」

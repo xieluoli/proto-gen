@@ -97,7 +97,7 @@ cat > "$OUTPUT" <<EOF
  *
  * ⚠ Sidebar 子 token + 状态色派生 tweakcn 不给，请手工补：
  *   1. 从目标项目 src/index.css（或 app/globals.css）抽 --sidebar-* 8 个
- *   2. 状态色按 PR 真值覆盖 --success/--warning/--info 三套 12 个
+ *   2. 状态色按项目真值覆盖 --success/--warning/--info 三套 12 个
  */
 
 /* 字体 CDN */

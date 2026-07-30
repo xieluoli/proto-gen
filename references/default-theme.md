@@ -68,9 +68,9 @@ tweakcn 只提供 19 个核心 token，下面这些不给，脚本会写占位 +
 --info    / --info-foreground    / --info-muted    / --info-border
 ```
 
-脚本默认填了一组通用 HSL 真值（绿 / 橙 / 主色）；目标项目若有定制（如绿色饱和度不同）按项目主题文件覆盖。
+脚本默认填了一组通用 HSL 真值（绿 / 橙 / 主色）；目标项目若有定制（如绿色饱和度不同）按项目主题文件覆盖。`--info` 通常 = `var(--primary)`（shadcn 习惯）。
 
-`--info` 通常 = `var(--primary)` —— shadcn 习惯。
+上面是**要补哪些**；每个 token 的**具体真值与 fallback** 见 [`shadcn-tweakcn-theme.md`](./shadcn-tweakcn-theme.md) 的「② 状态色派生」段。
 
 ### ③ 字体确认
 
@@ -124,6 +124,8 @@ tweakcn 只提供 19 个核心 token，下面这些不给，脚本会写占位 +
 | 字体 | `--font-mono` | `IBM Plex Mono, ...` |
 
 ## 圆角阶梯速查（**写组件时严格按此查表**）
+
+> 圆角规范的**单一源**。tailwind 项目怎么把这套阶梯映射到 `sm/md/lg/xl`，见 [`shadcn-tweakcn-theme.md`](./shadcn-tweakcn-theme.md) 的「④ tailwind 圆角层级」。
 
 `theme.css` 把 shadcn 圆角 cascade 落成 6 个 token + 装饰例外区。**默认主题 `--radius = 1.3rem (20.8px)`** 是大圆角风格，所以下表实测像素整体偏大；切换主题后 token 自动跟随 `--radius` 重算。
 
