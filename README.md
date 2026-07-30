@@ -165,7 +165,8 @@ proto-gen/
 │   ├── css-components.md                 类名 → 用途 → components.html 锚点 索引表 + 业务衍生类
 │   ├── default-theme.md                  proto-gen 默认主题（violet）+ 切换流程 + 圆角阶梯速查 + 装饰例外
 │   ├── shadcn-tweakcn-theme.md           目标项目接入指引（sidebar 子 token 陷阱 / 字体大小映射 / lucide 踩坑）
-│   ├── prd-rules.md                      PRD bullets 写法 + 重复引用规则 + 产品语言禁代码语言
+│   ├── prd-rules.md                      每条 bullet 怎么写：元素模板 + 重复引用 + 产品语言禁代码语言
+│   ├── prd-document.md                   整篇 PRD 文档怎么组织：章节骨架 + 框架树 + 配置表 + 命名约定
 │   ├── prd-highlight.md                  data-comp / data-target 命名约定 + 交付剥离须知
 │   └── review-checklist.md               评审清单（组件复用 / 基于最新迭代 / 风格沉淀），prototype-reviewer 的规则源
 └── evals/

@@ -169,7 +169,8 @@ cp ~/.claude/skills/proto-gen/agents/prototype-reviewer.md .claude/agents/
 | `references/css-components.md` | **类名 → 用途 → components.html 锚点** 索引表；不再含 hex / px 等具体值 | PC · macOS 系列 |
 | `references/default-theme.md` | proto-gen 默认主题（violet）说明 + 切换流程 + token 全表 + 切换后必须手工补的 3 项 | 设备无关 |
 | `references/shadcn-tweakcn-theme.md` | **目标项目接入**：当原型要对齐业务项目自身主题时如何覆盖 `theme.css`（sidebar 子 token 陷阱 / 状态色派生 / 字体大小映射 / lucide 踩坑 / 自检清单） | 设备无关；项目接入场景 |
-| `references/prd-rules.md` | PRD bullets 写法、元素描述模板、重复内容引用规则 | 设备无关 |
+| `references/prd-rules.md` | **每条 bullet 怎么写**：元素描述模板、重复内容引用规则、改动型只写增量、产品语言禁代码语言 | 设备无关 |
+| `references/prd-document.md` | **整篇 PRD 文档怎么组织**：章节骨架、框架 ASCII 树、配置表 + YAML、格式与命名约定 | 设备无关；需独立 PRD md 时 |
 | `references/prd-highlight.md` | PRD ↔ 原型 双向 hover 联动：`data-comp` / `data-target` 命名约定 / scope / 交付剥离须知 | 设备无关 |
 | `references/review-checklist.md` | **评审清单**：组件复用 / 基于最新原型迭代 / 结构契约 / PRD 面板 / 风格沉淀建议输出格式 | 设备无关 |
 
@@ -250,7 +251,7 @@ cp ~/.claude/skills/proto-gen/agents/prototype-reviewer.md .claude/agents/
 ## 输出文件
 
 - **HTML 原型**：`{user-dir}/{name}.html`（包含全部 sections，自包含单文件，token / 通用组件样式由注入脚本回填）
-- **（可选）PRD md**：如用户需要，同步生成 `{name}.md`
+- **（可选）PRD md**：如用户需要，同步生成 `{name}.md`，结构按 [`references/prd-document.md`](references/prd-document.md)；与 HTML 旁注面板内容两处必须同步
 
 ## 验证
 

@@ -1,6 +1,8 @@
 # PRD bullets 写法规范
 
 > **适用范围**：设备无关。PC · macOS / Mobile 系列共用同一套 PRD 写法。
+>
+> 本文管**每一条 bullet 怎么写**，对原型旁注面板（prd-panel）与 PRD 文档同样适用。要写独立 PRD **文档**（章节骨架 / 框架图 / 配置表 / 命名约定）另见 [`prd-document.md`](prd-document.md)。
 
 每个 section 的 PRD bullets 按**从上到下视觉布局顺序**排列，顶部控件 → 主区内容 → 操作按钮 → 弹窗/抽屉。
 
