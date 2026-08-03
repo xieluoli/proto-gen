@@ -31,13 +31,39 @@
 
 ## 安装
 
-把这个仓库 clone 到 Claude Code 的 skills 目录：
+**推荐装到项目里**——skill、评审规则、设计系统跟着仓库走，团队成员 clone 项目就有，不必各自配置。在你的**项目根目录**执行：
+
+```bash
+# 1. skill 本体
+git clone git@github.com:xieluoli/proto-gen.git .claude/skills/proto-gen
+
+# 2. 让评审 agent 生效（Claude Code 只识别 .claude/agents/ 下的 agent 定义，
+#    skill 自带的那份在 .claude/skills/proto-gen/agents/，必须拷出来才会被加载）
+mkdir -p .claude/agents
+cp .claude/skills/proto-gen/agents/prototype-reviewer.md .claude/agents/
+```
+
+装完**重启会话**生效。验证：skill 列表里有 `proto-gen`，agent 列表里有 `prototype-reviewer`。
+
+第 2 步不能省——skill 目录里的 `agents/` 不会被自动加载，不拷贝的话生成完原型无 agent 可用。
+
+> **不需要**往项目里拷任何 css / js。生成的 HTML 是自包含单文件，样式由注入脚本回填（见下文「样式怎么进到 HTML 里」）。
+
+<details>
+<summary><b>多个项目共用一份？改装用户级</b></summary>
 
 ```bash
 git clone git@github.com:xieluoli/proto-gen.git ~/.claude/skills/proto-gen
+
+# agent 可以跟着装用户级（所有项目通用），也可以只拷进某个项目
+mkdir -p ~/.claude/agents
+cp ~/.claude/skills/proto-gen/agents/prototype-reviewer.md ~/.claude/agents/
 ```
 
-Claude Code 启动时会自动加载所有 `~/.claude/skills/*` 下的 skill。**不需要**往项目里拷任何 css / js——生成的 HTML 是自包含单文件，样式由注入脚本回填（见下文「样式怎么进到 HTML 里」）。
+装用户级时，**本文档里所有 `.claude/skills/proto-gen/...` 的命令路径换成 `~/.claude/skills/proto-gen/...`**。
+
+两种装法可以并存，就近优先：项目级那份会覆盖用户级的同名 skill。想给某个项目定制主题或评审规则，就用项目级。
+</details>
 
 ### 可选前置依赖
 
@@ -84,21 +110,16 @@ Claude Code 启动时会自动加载所有 `~/.claude/skills/*` 下的 skill。*
 
 ```bash
 # 单文件或整个目录（递归收集 *.html）都行，幂等，可反复跑
-~/.claude/skills/proto-gen/assets/inject-assets.mjs your-project/prototypes/
+.claude/skills/proto-gen/assets/inject-assets.mjs your-project/prototypes/
 ```
 
 改完主题或组件样式，跑一次这条命令，**所有原型统一换皮**。页面自有样式写在标记块之外，注入不会碰。
 
 ## 评审
 
-原型生成或大改后，跑一次评审拿批量问题清单，一次性修完再交付：
+原型生成或大改后，跑一次评审拿批量问题清单，一次性修完再交付。
 
-```bash
-mkdir -p .claude/agents
-cp ~/.claude/skills/proto-gen/agents/prototype-reviewer.md .claude/agents/
-```
-
-然后在 Claude Code 里说 "用 prototype-reviewer 审查 xxx.html"。它只读、不改文件，产出分段问题清单：
+评审 agent 在[安装](#安装)第 2 步已经拷到 `.claude/agents/`，直接在 Claude Code 里说 "用 prototype-reviewer 审查 xxx.html" 即可。它只读、不改文件，产出分段问题清单：
 
 - **组件复用** —— 有没有自造已存在的类名、有没有重复 3 次该抽母版的片段
 - **基于最新原型迭代** —— 有没有从旧版本起步、通用区域是否与最近一份产出对齐
@@ -113,10 +134,10 @@ cp ~/.claude/skills/proto-gen/agents/prototype-reviewer.md .claude/agents/
 
 ```bash
 # 1. 换 token（抽 tweakcn JSON 的 19 个 shadcn 核心 token 覆盖 theme.css）
-~/.claude/skills/proto-gen/assets/extract-theme.sh https://tweakcn.com/themes/<your-theme-id>
+.claude/skills/proto-gen/assets/extract-theme.sh https://tweakcn.com/themes/<your-theme-id>
 
 # 2. 刷进已有原型（不跑这步，已生成的自包含 HTML 不会变）
-~/.claude/skills/proto-gen/assets/inject-assets.mjs your-project/prototypes/
+.claude/skills/proto-gen/assets/inject-assets.mjs your-project/prototypes/
 ```
 
 ⚠️ tweakcn 只给 19 个核心 token，下面 **3 项它不给**，脚本会留 TODO 占位，**必须补**，否则有可见问题：

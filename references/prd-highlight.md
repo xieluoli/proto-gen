@@ -11,13 +11,13 @@
 
 ## 接入步骤
 
-1. **HTML head**：保持原有 `<link rel="stylesheet" href="shared.css" />` 即可，高亮样式已在 `shared.css` 末尾
-2. **HTML head 加一行**：`<script src="prd-highlight.js" defer></script>`
-3. **首次使用**：把 `prd-highlight.js` 拷到原型目录（与 `shared.css` 同级）
+联动运行时由**注入脚本**写进原型，不需要手工拷任何文件：
 
-```bash
-cp ~/.claude/skills/proto-gen/assets/prd-highlight.js your-project/prototypes/
-```
+1. **HTML head 留标记块**：`<!-- @proto-gen:highlight:start -->` / `<!-- @proto-gen:highlight:end -->`（高亮样式本身已在 `shared.css` 里，随 shared 块一起注入）
+2. **跑注入脚本**：`<SKILL>/assets/inject-assets.mjs your-project/prototypes/`，`prd-highlight.js` 的内容会填进标记之间
+3. **标注元素**：按下文命名约定给 PRD bullet 加 `data-target`、给原型组件加 `data-comp`
+
+> `<SKILL>` = proto-gen 安装目录（`.claude/skills/proto-gen` 或 `~/.claude/skills/proto-gen`）。
 
 ## 标注约定
 

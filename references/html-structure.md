@@ -43,9 +43,20 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>{页面名} · 原型</title>
-<link rel="stylesheet" href="theme.css" />         <!-- 主题 token + 字体 CDN（默认 violet，可通过 extract-theme.sh 切换） -->
-<link rel="stylesheet" href="shared.css" />        <!-- 组件类骨架 -->
+
+<!-- 三对注入标记：先留空块，写完 HTML 后跑 inject-assets.mjs 回填，产出即自包含单文件 -->
+<!-- @proto-gen:theme:start -->
+<!-- @proto-gen:theme:end -->
+<!-- @proto-gen:shared:start -->
+<!-- @proto-gen:shared:end -->
+<!-- @proto-gen:highlight:start -->
+<!-- @proto-gen:highlight:end -->
+
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+<style>
+  /* 页面自有样式写在标记块之外，注入不会碰 */
+</style>
 </head>
 <body>
 

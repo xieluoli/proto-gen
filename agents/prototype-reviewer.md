@@ -8,14 +8,23 @@ tools: Read, Grep, Glob, Bash
 
 ## 规则来源
 
-完整清单读 `~/.claude/skills/proto-gen/references/review-checklist.md`，**以它为准**，本文件不复述规则。配套参考：
+规则在 proto-gen skill 目录下。skill 可能装在项目级或用户级，**动手前先定位**，取先命中的那个：
 
-- `~/.claude/skills/proto-gen/references/css-components.md` — 已有类名索引，判断「该复用还是该新增」的依据
-- `~/.claude/skills/proto-gen/references/prd-rules.md` — PRD bullets 写法
-- `~/.claude/skills/proto-gen/references/prd-highlight.md` — 脚手架剥离清单
-- `~/.claude/skills/proto-gen/assets/shared.css` — 通用组件样式实际实现
+```bash
+ls .claude/skills/proto-gen/references/ 2>/dev/null || ls ~/.claude/skills/proto-gen/references/
+```
 
-若目标项目自带 `.claude/agents/prototype-reviewer.md` 的特化版本（主题 token 值、外壳结构、版本命名约定等），那些特化规则**叠加**在本清单之上，冲突时以项目特化为准。
+下文用 `<SKILL>` 指代命中的目录（`.claude/skills/proto-gen` 或 `~/.claude/skills/proto-gen`）：
+
+- `<SKILL>/references/review-checklist.md` — **完整评审清单，以它为准**，本文件不复述规则
+- `<SKILL>/references/css-components.md` — 已有类名索引，判断「该复用还是该新增」的依据
+- `<SKILL>/references/prd-rules.md` — PRD bullets 写法
+- `<SKILL>/references/prd-highlight.md` — 脚手架剥离清单
+- `<SKILL>/assets/shared.css` — 通用组件样式实际实现
+
+两处都没有，说明 skill 未安装：直接报告「找不到 proto-gen 规则文件，无法审查」并停下，**不要凭记忆编规则**。
+
+本文件若被项目改写过（叠加了自有主题 token、外壳结构、版本命名约定等），那些特化规则**叠加**在通用清单之上，冲突时以特化为准。
 
 ## 三条主线
 

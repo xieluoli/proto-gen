@@ -11,6 +11,19 @@ description: >
 
 本 skill 生成统一风格的高保真 HTML 原型，适合 Web/桌面应用产品 MVP 阶段的方案演示与评审。
 
+## 路径约定
+
+本 skill 可装在**项目级**（推荐，跟仓库走）或**用户级**（多项目共用）。下文用 `<SKILL>` 指代它的根目录，跑命令前先确定是哪个：
+
+```bash
+[ -d .claude/skills/proto-gen ] && echo .claude/skills/proto-gen || echo ~/.claude/skills/proto-gen
+```
+
+- 项目级：`.claude/skills/proto-gen`
+- 用户级：`~/.claude/skills/proto-gen`
+
+两者并存时**项目级优先**（就近覆盖）。
+
 ## 前置依赖（首次在一个项目里使用时检查）
 
 proto-gen 本身自包含，不装任何东西也能生成原型。但原型是需求链条的一环——上游要有需求文档承载「为什么做」，下游要有评审把关质量。下面两项**推荐**装上，缺了就提醒用户并协助安装，用户拒绝则跳过、继续生成。
@@ -37,16 +50,16 @@ openspec init                           # 在项目根初始化，生成 openspe
 
 `claude-plugins-official` 是 Claude Code 默认已注册的官方市场，无需先 add。装完重启会话生效。检测方式：看 skill 列表里有没有 `superpowers:brainstorming`。
 
-**3. prototype-reviewer —— 原型评审员（本 skill 自带）**
+**3. prototype-reviewer —— 原型评审员（本 skill 自带，但需拷贝才生效）**
 
-`agents/prototype-reviewer.md` 是随本 skill 分发的只读 subagent。拷到项目里即可调用：
+`agents/prototype-reviewer.md` 随本 skill 分发，但 **Claude Code 只加载 `.claude/agents/` 下的 agent 定义**，skill 目录里的那份不会被自动识别。首次使用时检查 `.claude/agents/prototype-reviewer.md` 是否存在，不存在就拷一份：
 
 ```bash
 mkdir -p .claude/agents
-cp ~/.claude/skills/proto-gen/agents/prototype-reviewer.md .claude/agents/
+cp <SKILL>/agents/prototype-reviewer.md .claude/agents/
 ```
 
-规则单一源是 [`references/review-checklist.md`](references/review-checklist.md)，agent 文件只是薄壳。项目有特化规则（自有主题 token、外壳结构、版本命名）就在项目的那份里叠加，不要回写本 skill。
+拷完需重启会话才能调用。规则单一源是 [`references/review-checklist.md`](references/review-checklist.md)，agent 文件只是薄壳。项目有特化规则（自有主题 token、外壳结构、版本命名）就在项目的那份里叠加，不要回写本 skill。
 
 ## 第一次用：先定设计系统来源
 
@@ -154,7 +167,7 @@ cp ~/.claude/skills/proto-gen/agents/prototype-reviewer.md .claude/agents/
 **注入 / 批量刷新**（同一命令，参数可混填文件与目录，目录递归收集 `*.html`）：
 
 ```bash
-~/.claude/skills/proto-gen/assets/inject-assets.mjs path/to/prototypes/
+<SKILL>/assets/inject-assets.mjs path/to/prototypes/
 ```
 
 改完 `theme.css` / `shared.css` 后跑一次，所有带标记的原型统一换皮。脚本幂等，重复执行结果一致。
@@ -233,7 +246,7 @@ cp ~/.claude/skills/proto-gen/agents/prototype-reviewer.md .claude/agents/
 `<head>` 内**必须带注入标记块**（见「自包含注入机制」，标记内先留空即可），页面自有样式写在标记块之外。写入用户指定目录下的 `{filename}.html` 后，跑一次注入脚本回填样式：
 
 ```bash
-~/.claude/skills/proto-gen/assets/inject-assets.mjs {user-dir}/{filename}.html
+<SKILL>/assets/inject-assets.mjs {user-dir}/{filename}.html
 ```
 
 ### 6. 生成后评审
