@@ -1,6 +1,6 @@
 # proto-gen
 
-> 给 Claude Code 用的 skill — 根据自然语言描述/PRD 快速生成高保真 HTML 原型。
+> 给 Claude Code / Codex 用的 skill — 根据自然语言描述/PRD 快速生成高保真 HTML 原型。
 
 适合在产品 MVP 阶段做方案演示与评审：把脑子里的构思一键变成可在浏览器打开的、带页面索引和功能旁注的可视化原型。**主题可插拔**（一份 tweakcn 链接换皮）+ **组件可视速查**（产品 / 测试 / AI 都能照着写需求）。
 
@@ -31,7 +31,11 @@
 
 ## 安装
 
-**推荐装到项目里**——skill、评审规则、设计系统跟着仓库走，团队成员 clone 项目就有，不必各自配置。在你的**项目根目录**执行：
+Claude Code 和 Codex 读的是同一份 `SKILL.md`，装法只差目录。两边都**推荐装到项目里**——skill、评审规则、设计系统跟着仓库走，团队成员 clone 项目就有，不必各自配置。
+
+### 装到 Claude Code
+
+在你的**项目根目录**执行：
 
 ```bash
 # 1. skill 本体
@@ -49,21 +53,44 @@ cp .claude/skills/proto-gen/agents/prototype-reviewer.md .claude/agents/
 
 > **不需要**往项目里拷任何 css / js。生成的 HTML 是自包含单文件，样式由注入脚本回填（见下文「样式怎么进到 HTML 里」）。
 
+### 装到 Codex
+
+目录约定与 Claude Code 一致（`skills/<skill-name>/SKILL.md`），只是根目录换成 `.codex`。项目根执行：
+
+```bash
+git clone git@github.com:xieluoli/proto-gen.git .codex/skills/proto-gen
+```
+
+装完重启会话生效。**上面的第 2 步在 Codex 下不适用**——Codex 没有 `.claude/agents/` 这种"放一份 md 就注册成可调用 subagent"的目录。评审改成直接让它读规则文件执行，效果一样，只是少了独立上下文（见[评审](#评审)）。
+
+下文「可选前置依赖」两项 Codex 都能装，命令见那张表。
+
+### 四种装法的路径
+
 <details>
 <summary><b>多个项目共用一份？改装用户级</b></summary>
 
 ```bash
+# Claude Code
 git clone git@github.com:xieluoli/proto-gen.git ~/.claude/skills/proto-gen
 
 # agent 可以跟着装用户级（所有项目通用），也可以只拷进某个项目
 mkdir -p ~/.claude/agents
 cp ~/.claude/skills/proto-gen/agents/prototype-reviewer.md ~/.claude/agents/
+
+# Codex
+git clone git@github.com:xieluoli/proto-gen.git ~/.codex/skills/proto-gen
 ```
-
-装用户级时，**本文档里所有 `.claude/skills/proto-gen/...` 的命令路径换成 `~/.claude/skills/proto-gen/...`**。
-
-两种装法可以并存，就近优先：项目级那份会覆盖用户级的同名 skill。想给某个项目定制主题或评审规则，就用项目级。
 </details>
+
+| | Claude Code | Codex |
+|---|---|---|
+| **项目级**（推荐，跟仓库走） | `.claude/skills/proto-gen/` | `.codex/skills/proto-gen/` |
+| **用户级**（多项目共用） | `~/.claude/skills/proto-gen/` | `~/.codex/skills/proto-gen/` |
+
+**本文档里的命令路径一律按 Claude Code 项目级写**，用其他装法就换掉前缀。
+
+项目级与用户级可以并存，就近优先：项目级那份会覆盖用户级的同名 skill。想给某个项目定制主题或评审规则，就用项目级。
 
 ### 可选前置依赖
 
@@ -72,7 +99,7 @@ cp ~/.claude/skills/proto-gen/agents/prototype-reviewer.md ~/.claude/agents/
 | 依赖 | 补什么 | 装法 |
 |---|---|---|
 | [OpenSpec](https://github.com/Fission-AI/OpenSpec) | 需求文档骨架，让原型挂在一份变更提案下，改了什么、为什么改可追溯 | `npm i -g @fission-ai/openspec` → 项目根跑 `openspec init` |
-| [superpowers](https://github.com/anthropics/claude-plugins-official) | brainstorming / writing-plans / verification 等流程 skill，补上「想清楚」与「验收」两端 | Claude Code 里跑 `/plugin install superpowers@claude-plugins-official` |
+| [superpowers](https://github.com/obra/superpowers) | brainstorming / writing-plans / verification 等流程 skill，补上「想清楚」与「验收」两端 | Claude Code：`/plugin install superpowers@claude-plugins-official`<br>Codex：`codex plugin add superpowers@openai-curated` |
 
 装了 OpenSpec 后，原型建议放在 `openspec/changes/<change-name>/prototypes/`，与该变更的 proposal.md / spec.md 同级。
 
@@ -92,7 +119,7 @@ cp ~/.claude/skills/proto-gen/agents/prototype-reviewer.md ~/.claude/agents/
 
 ## 使用
 
-在 Claude Code 里说：
+在 Claude Code / Codex 里说：
 
 > "做一个会员中心的原型，包含个人信息页、订单列表、订单详情"
 
@@ -119,7 +146,11 @@ cp ~/.claude/skills/proto-gen/agents/prototype-reviewer.md ~/.claude/agents/
 
 原型生成或大改后，跑一次评审拿批量问题清单，一次性修完再交付。
 
-评审 agent 在[安装](#安装)第 2 步已经拷到 `.claude/agents/`，直接在 Claude Code 里说 "用 prototype-reviewer 审查 xxx.html" 即可。它只读、不改文件，产出分段问题清单：
+评审 agent 在[安装](#安装)第 2 步已经拷到 `.claude/agents/`，直接在 Claude Code 里说 "用 prototype-reviewer 审查 xxx.html" 即可。
+
+Codex 没有等价的 agent 注册目录，改成说 "按 `.codex/skills/proto-gen/references/review-checklist.md` 审查 xxx.html，只读不改文件"——规则同源，产出一致，区别只是评审跑在当前上下文里而非独立上下文。
+
+评审只读、不改文件，产出分段问题清单：
 
 - **组件复用** —— 有没有自造已存在的类名、有没有重复 3 次该抽母版的片段
 - **基于最新原型迭代** —— 有没有从旧版本起步、通用区域是否与最近一份产出对齐
@@ -169,9 +200,9 @@ cp ~/.claude/skills/proto-gen/agents/prototype-reviewer.md ~/.claude/agents/
 
 ```
 proto-gen/
-├── SKILL.md                              skill 入口（Claude Code 加载）
+├── SKILL.md                              skill 入口（Claude Code / Codex 均加载）
 ├── agents/
-│   └── prototype-reviewer.md             原型评审 subagent（拷到项目 .claude/agents/ 使用）
+│   └── prototype-reviewer.md             原型评审 subagent（Claude Code 专有，拷到项目 .claude/agents/ 使用）
 ├── assets/
 │   ├── theme.css                         主题 token 单一来源（默认 violet，可换）
 │   ├── shared.css                        组件类骨架（全部 var() 引用 theme.css）

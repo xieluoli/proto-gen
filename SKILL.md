@@ -13,16 +13,20 @@ description: >
 
 ## 路径约定
 
-本 skill 可装在**项目级**（推荐，跟仓库走）或**用户级**（多项目共用）。下文用 `<SKILL>` 指代它的根目录，跑命令前先确定是哪个：
+本 skill 同时支持 **Claude Code** 与 **Codex**，可装在**项目级**（推荐，跟仓库走）或**用户级**（多项目共用），共四种位置。下文用 `<SKILL>` 指代它的根目录，跑命令前先探测：
 
 ```bash
-[ -d .claude/skills/proto-gen ] && echo .claude/skills/proto-gen || echo ~/.claude/skills/proto-gen
+for d in .claude/skills/proto-gen .codex/skills/proto-gen ~/.claude/skills/proto-gen ~/.codex/skills/proto-gen; do
+  [ -d "$d" ] && echo "$d" && break
+done
 ```
 
-- 项目级：`.claude/skills/proto-gen`
-- 用户级：`~/.claude/skills/proto-gen`
+| | Claude Code | Codex |
+|---|---|---|
+| 项目级 | `.claude/skills/proto-gen` | `.codex/skills/proto-gen` |
+| 用户级 | `~/.claude/skills/proto-gen` | `~/.codex/skills/proto-gen` |
 
-两者并存时**项目级优先**（就近覆盖）。
+并存时**项目级优先**（就近覆盖）。
 
 ## 前置依赖（首次在一个项目里使用时检查）
 
@@ -44,11 +48,15 @@ openspec init                           # 在项目根初始化，生成 openspe
 
 提供 brainstorming（需求澄清）、writing-plans（方案落地）、verification-before-completion（交付前验证）等流程 skill，补上 proto-gen 不覆盖的「想清楚」与「验收」两端。
 
-```
+```bash
+# Claude Code
 /plugin install superpowers@claude-plugins-official
+
+# Codex
+codex plugin add superpowers@openai-curated
 ```
 
-`claude-plugins-official` 是 Claude Code 默认已注册的官方市场，无需先 add。装完重启会话生效。检测方式：看 skill 列表里有没有 `superpowers:brainstorming`。
+两个市场（`claude-plugins-official` / `openai-curated`）都是默认已注册的官方源，无需先 add。装完重启会话生效。检测方式：看 skill 列表里有没有 `superpowers:brainstorming`。
 
 **3. prototype-reviewer —— 原型评审员（本 skill 自带，但需拷贝才生效）**
 
@@ -59,7 +67,11 @@ mkdir -p .claude/agents
 cp <SKILL>/agents/prototype-reviewer.md .claude/agents/
 ```
 
-拷完需重启会话才能调用。规则单一源是 [`references/review-checklist.md`](references/review-checklist.md)，agent 文件只是薄壳。项目有特化规则（自有主题 token、外壳结构、版本命名）就在项目的那份里叠加，不要回写本 skill。
+拷完需重启会话才能调用。
+
+**Codex 下没有等价的 agent 注册目录**，跳过拷贝，评审时直接读 `<SKILL>/references/review-checklist.md` 按清单逐项检查，同样只读不改文件。
+
+规则单一源是 [`references/review-checklist.md`](references/review-checklist.md)，agent 文件只是薄壳。项目有特化规则（自有主题 token、外壳结构、版本命名）就在项目的那份里叠加，不要回写本 skill。
 
 ## 第一次用：先定设计系统来源
 
