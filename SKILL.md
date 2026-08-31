@@ -247,7 +247,7 @@ cp <SKILL>/agents/prototype-reviewer.md .claude/agents/
 
 - 按页面从上到下视觉顺序排列
 - 一个元素一条 bullet，句式见规范
-- **优先用类名引用替代具体值描述**：不要写「展示一个紫色 #6366F1 圆角 8px 主按钮」，而写「展示主按钮（应用 `.btn-primary` 风格）」。视觉规范由 `theme.css` 与 `components.html` 沉淀，PRD / 旁注只引用类名
+- **写产品，不写实现**：既不写「紫色 #6366F1 圆角 8px」，也不写类名（`.btn-primary`）。写「展示主按钮」就够——面板的读者是产品与测试，他们不需要知道类名；视觉规范由 `theme.css` 与 `components.html` 沉淀，那才是研发要看的地方。详见 [`references/prd-rules.md`](references/prd-rules.md) 的「面板写产品，不写实现」一节
 - **重复内容处理**：第一个 section 完整描述；后续 section 对相同通用结构用引用，只描述差异
 - **顺手绑定 highlight**：按 `references/prd-highlight.md` 给 bullet 加 `data-target="<key>"`、给原型组件加 `data-comp="<key>"`，开启 PRD ↔ 原型 双向 hover 联动
 
